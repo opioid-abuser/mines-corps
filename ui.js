@@ -39,7 +39,7 @@ function buildEnergyStoragePanel() {
         </div>
         <!-- Centrale électrique -->
         <div class="resource-item" id="powerPlantSection" style="display: none;">
-            <div class="section-title">Centrale électrique</div>
+            <div class="section-title energy-accent">Centrale électrique</div>
             <div>Niveau: <span id="powerPlantLevel">0</span> / <span id="powerPlantMaxLevel">10</span></div>
             <div>Consommation: <span id="deuteriumConsume">0</span>/sec</div>
             <div>Production: <span class="energy-accent" id="energyProd">0</span>/sec</div>
@@ -117,32 +117,54 @@ function fillClassicUpgrades() {
     upgradesData.forEach(up => {
         const row = document.createElement('div');
         row.className = 'upgrade-row';
-        row.innerHTML = `
-            <div class="upgrade-info">
-                <div class="upgrade-name">${up.name}</div>
-                <div class="upgrade-desc">${up.getDescription()}</div>
-            </div>
-            <div class="upgrade-cost">
-                <span class="cost-crystal"></span>
-                <span class="cost-metal"></span>
-            </div>
-            <div class="upgrade-actions">
-                <button class="upgrade-buy buy-classic" data-id="${up.id}">Acheter</button>
-                <button class="boost-btn boost-deuterium" data-id="${up.id}" style="display: none;">Boost</button>
-            </div>
-        `;
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'upgrade-info';
+
+        const nameLine = document.createElement('div');
+        nameLine.className = 'upgrade-name-line';
+        nameLine.textContent = up.name;
+
+        const levelLine = document.createElement('div');
+        levelLine.className = 'upgrade-level-line';
+
+        const descLine = document.createElement('div');
+        descLine.className = 'upgrade-desc-line';
+
+        infoDiv.appendChild(nameLine);
+        infoDiv.appendChild(levelLine);
+        infoDiv.appendChild(descLine);
+
+        const costDiv = document.createElement('div');
+        costDiv.className = 'upgrade-cost';
+        const costCrystalSpan = document.createElement('span');
+        costCrystalSpan.className = 'cost-crystal';
+        const costMetalSpan = document.createElement('span');
+        costMetalSpan.className = 'cost-metal';
+        costDiv.appendChild(costCrystalSpan);
+        costDiv.appendChild(costMetalSpan);
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'upgrade-actions';
+
+        const buyBtn = document.createElement('button');
+        buyBtn.className = 'upgrade-buy buy-classic';
+        buyBtn.textContent = 'Acheter';
+        buyBtn.addEventListener('click', () => { if (buyUpgrade(up.id)) updateUI(); });
+
+        const boostBtn = document.createElement('button');
+        boostBtn.className = 'boost-btn boost-deuterium';
+        boostBtn.textContent = 'Boost';
+        boostBtn.style.display = 'none';
+        boostBtn.addEventListener('click', () => { if (boostUpgradeWithDeuterium(up.id)) updateUI(); });
+
+        actionsDiv.appendChild(buyBtn);
+        actionsDiv.appendChild(boostBtn);
+
+        row.appendChild(infoDiv);
+        row.appendChild(costDiv);
+        row.appendChild(actionsDiv);
         container.appendChild(row);
-    });
-    // Écouteurs communs
-    document.querySelectorAll('.buy-classic').forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (buyUpgrade(btn.dataset.id)) { updateUI(); }
-        });
-    });
-    document.querySelectorAll('.boost-deuterium').forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (boostUpgradeWithDeuterium(btn.dataset.id)) { updateUI(); }
-        });
     });
 }
 
@@ -152,21 +174,42 @@ function fillEnergyUpgrades() {
     energyUpgradesData.forEach(eu => {
         const row = document.createElement('div');
         row.className = 'upgrade-row';
-        row.innerHTML = `
-            <div class="upgrade-info">
-                <div class="upgrade-name">${eu.name}</div>
-                <div class="upgrade-desc">${eu.getDescription()}</div>
-            </div>
-            <div class="upgrade-cost"><span class="cost-energy"></span></div>
-            <button class="upgrade-buy buy-energy" data-id="${eu.id}">Acheter</button>
-        `;
-        container.appendChild(row);
-    });
-    document.querySelectorAll('.buy-energy').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const eu = energyUpgradesData.find(u => u.id === btn.dataset.id);
-            if (eu && eu.buy()) { updateUI(); }
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'upgrade-info';
+
+        const nameLine = document.createElement('div');
+        nameLine.className = 'upgrade-name-line';
+        nameLine.textContent = eu.name;
+
+        const levelLine = document.createElement('div');
+        levelLine.className = 'upgrade-level-line';
+        levelLine.textContent = `Niv. ${eu.level}`;
+
+        const descLine = document.createElement('div');
+        descLine.className = 'upgrade-desc-line';
+
+        infoDiv.appendChild(nameLine);
+        infoDiv.appendChild(levelLine);
+        infoDiv.appendChild(descLine);
+
+        const costDiv = document.createElement('div');
+        costDiv.className = 'upgrade-cost';
+        const costSpan = document.createElement('span');
+        costSpan.className = 'cost-energy';
+        costDiv.appendChild(costSpan);
+
+        const buyBtn = document.createElement('button');
+        buyBtn.className = 'upgrade-buy buy-energy';
+        buyBtn.textContent = 'Acheter';
+        buyBtn.addEventListener('click', () => {
+            if (eu.buy()) updateUI();
         });
+
+        row.appendChild(infoDiv);
+        row.appendChild(costDiv);
+        row.appendChild(buyBtn);
+        container.appendChild(row);
     });
 }
 
@@ -176,21 +219,42 @@ function fillTitaniteUpgrades() {
     titaniteUpgradesData.forEach(tu => {
         const row = document.createElement('div');
         row.className = 'upgrade-row';
-        row.innerHTML = `
-            <div class="upgrade-info">
-                <div class="upgrade-name">${tu.name}</div>
-                <div class="upgrade-desc">${tu.getDescription()}</div>
-            </div>
-            <div class="upgrade-cost"><span class="cost-titanite"></span></div>
-            <button class="upgrade-buy buy-titanite" data-id="${tu.id}">Acheter</button>
-        `;
-        container.appendChild(row);
-    });
-    document.querySelectorAll('.buy-titanite').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tu = titaniteUpgradesData.find(u => u.id === btn.dataset.id);
-            if (tu && tu.buy()) { updateUI(); }
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'upgrade-info';
+
+        const nameLine = document.createElement('div');
+        nameLine.className = 'upgrade-name-line';
+        nameLine.textContent = tu.name;
+
+        const levelLine = document.createElement('div');
+        levelLine.className = 'upgrade-level-line';
+        levelLine.textContent = `Niv. ${tu.level}`;
+
+        const descLine = document.createElement('div');
+        descLine.className = 'upgrade-desc-line';
+
+        infoDiv.appendChild(nameLine);
+        infoDiv.appendChild(levelLine);
+        infoDiv.appendChild(descLine);
+
+        const costDiv = document.createElement('div');
+        costDiv.className = 'upgrade-cost';
+        const costSpan = document.createElement('span');
+        costSpan.className = 'cost-titanite';
+        costDiv.appendChild(costSpan);
+
+        const buyBtn = document.createElement('button');
+        buyBtn.className = 'upgrade-buy buy-titanite';
+        buyBtn.textContent = 'Acheter';
+        buyBtn.addEventListener('click', () => {
+            if (tu.buy()) updateUI();
         });
+
+        row.appendChild(infoDiv);
+        row.appendChild(costDiv);
+        row.appendChild(buyBtn);
+        container.appendChild(row);
     });
 }
 
@@ -323,22 +387,28 @@ function updateUI() {
         const up = upgradesData[idx];
         const costCrystal = new Decimal(up.baseCostCrystal).times(Decimal.pow(up.costMult, up.level));
         const costMetal = new Decimal(up.baseCostMetal).times(Decimal.pow(up.costMult, up.level));
-        const canBuy = up.level < up.maxLevel && resources.crystal.gte(costCrystal) && resources.metal.gte(costMetal);
+        const maxLevel = up.maxLevel;
+        const canBuy = up.level < maxLevel && resources.crystal.gte(costCrystal) && resources.metal.gte(costMetal);
         const reduction = getEnergyUpgradeEffect('deuteriumOptimization');
         const boostCost = new Decimal(up.deuteriumBoostCost).times(Decimal.pow(2, up.deuteriumBoostLevel)).times(1 - reduction);
         const canBoost = deuteriumUnlocked && resources.deuterium.gte(boostCost);
 
         let levelText;
-        if (up.level >= up.maxLevel) levelText = 'MAX';
-        else levelText = `Niv. ${up.level}/${up.maxLevel}`;
+        if (up.level >= maxLevel) levelText = 'MAX';
+        else levelText = `Niv. ${up.level}/${maxLevel}`;
         if (deuteriumUnlocked) levelText += ` (Boost ${up.deuteriumBoostLevel})`;
-        row.querySelector('.upgrade-name').textContent = `${up.name} (${levelText})`;
-        row.querySelector('.upgrade-desc').textContent = up.getDescription();
+
+        row.querySelector('.upgrade-name-line').textContent = up.name;
+        row.querySelector('.upgrade-level-line').textContent = levelText;
+        row.querySelector('.upgrade-desc-line').textContent = up.getDescription();
+
         row.querySelector('.cost-crystal').textContent = costCrystal.gt(0) ? `${formatNumber(costCrystal)} cristal` : '';
         row.querySelector('.cost-metal').textContent = costMetal.gt(0) ? `${formatNumber(costMetal)} métal` : '';
+
         const buyBtn = row.querySelector('.buy-classic');
         buyBtn.disabled = !canBuy;
-        buyBtn.textContent = up.level >= up.maxLevel ? 'OK' : 'Acheter';
+        buyBtn.textContent = up.level >= maxLevel ? 'OK' : 'Acheter';
+
         const boostBtn = row.querySelector('.boost-deuterium');
         boostBtn.style.display = deuteriumUnlocked ? '' : 'none';
         boostBtn.disabled = !canBoost;
@@ -380,9 +450,12 @@ function updateUI() {
             const maxed = eu.level >= eu.maxLevel;
             const cost = maxed ? new Decimal(0) : new Decimal(eu.baseCost).times(Decimal.pow(eu.costMult, eu.level)).floor();
             const canAfford = resources.energy.gte(cost);
-            row.querySelector('.upgrade-name').textContent = `${eu.name} (Niv. ${eu.level})`;
-            row.querySelector('.upgrade-desc').textContent = eu.getDescription();
+
+            row.querySelector('.upgrade-name-line').textContent = eu.name;
+            row.querySelector('.upgrade-level-line').textContent = `Niv. ${eu.level}`;
+            row.querySelector('.upgrade-desc-line').textContent = eu.getDescription();
             row.querySelector('.cost-energy').textContent = maxed ? 'MAX' : `${formatNumber(cost)} énergie`;
+
             const buyBtn = row.querySelector('.buy-energy');
             buyBtn.disabled = maxed || !canAfford;
             buyBtn.textContent = maxed ? 'OK' : 'Acheter';
@@ -398,9 +471,12 @@ function updateUI() {
             const maxed = tu.level >= tu.maxLevel;
             const cost = maxed ? new Decimal(0) : new Decimal(tu.baseCost).times(Decimal.pow(tu.costMult, tu.level)).floor();
             const canAfford = resources.titanite.gte(cost);
-            row.querySelector('.upgrade-name').textContent = `${tu.name} (Niv. ${tu.level})`;
-            row.querySelector('.upgrade-desc').textContent = tu.getDescription();
+
+            row.querySelector('.upgrade-name-line').textContent = tu.name;
+            row.querySelector('.upgrade-level-line').textContent = `Niv. ${tu.level}`;
+            row.querySelector('.upgrade-desc-line').textContent = tu.getDescription();
             row.querySelector('.cost-titanite').textContent = maxed ? 'MAX' : `${formatNumber(cost)} titanite`;
+
             const buyBtn = row.querySelector('.buy-titanite');
             buyBtn.disabled = maxed || !canAfford;
             buyBtn.textContent = maxed ? 'OK' : 'Acheter';
@@ -423,7 +499,7 @@ function updateUI() {
                 toggleBtn.style.display = '';
                 toggleBtn.textContent = auto.active ? 'Désactiver' : 'Activer';
                 toggleBtn.classList.toggle('active', auto.active);
-                statusEl.textContent = `Débloqué`;
+                statusEl.textContent = ``;
             } else {
                 buyBtn.style.display = '';
                 toggleBtn.style.display = 'none';
