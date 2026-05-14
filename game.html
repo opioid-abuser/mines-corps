@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mines Hexagonales - Edition Simplifiée</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/break_infinity.js@2.0.0/dist/break_infinity.min.js"></script>
+</head>
+<body>
+    <button id="saveFloatingBtn" title="Sauvegarde">S</button>
+    <div id="saveOverlay" class="overlay" style="display: none;">
+        <div class="overlay-content">
+            <button class="close-btn" id="closeOverlayBtn">&times;</button>
+            <h3>Sauvegarde</h3>
+            <div class="save-buttons">
+                <button id="saveBtn">Sauvegarder</button>
+                <button id="loadBtn">Charger</button>
+                <button id="exportBtn">Exporter</button>
+                <button id="importBtn">Importer</button>
+                <button id="resetBtn">Réinitialiser</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+            <div class="save-info" id="saveInfo"></div>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div class="left-column">
+            <div id="resources-panel"></div>
+            <div id="energy-storage-panel"></div>
+            <div id="automation-panel" style="display: none;"></div>
+        </div>
+        <div id="mines-panel"></div>
+        <div id="upgrades-panel"></div>
+    </div>
+
+    <script src="upgrades.js"></script>
+    <script src="game-state.js"></script>
+    <script src="ui.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
