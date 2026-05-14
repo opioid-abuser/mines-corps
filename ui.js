@@ -169,7 +169,7 @@ function buildTabTitanite() {
     document.getElementById('buyTitaniteBtn').addEventListener('click', buyTitaniteMine);
 }
 
-// Remplissage des grilles d'améliorations (versions simplifiées)
+// Remplissage des grilles d'améliorations
 function fillClassicUpgrades() {
     const container = document.getElementById('classicUpgrades');
     container.innerHTML = '';
@@ -288,7 +288,8 @@ function setupTabs() {
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            document.getElementById(btn.dataset.tab).classList.add('active');
+            const target = document.getElementById(btn.dataset.tab);
+            if (target) target.classList.add('active');
         });
     });
 }
@@ -303,6 +304,7 @@ function buyCrystalMine() {
     checkDeuteriumUnlock();
     updateUI();
 }
+
 function buyMetalMine() {
     const cost = getCostMetalMine();
     if (resources.metal.lt(cost)) return;
@@ -312,6 +314,7 @@ function buyMetalMine() {
     checkDeuteriumUnlock();
     updateUI();
 }
+
 function buyDeuteriumMine() {
     if (!deuteriumUnlocked) return;
     const cost = getCostDeuteriumMine();
@@ -322,6 +325,7 @@ function buyDeuteriumMine() {
     recalcProduction();
     updateUI();
 }
+
 function buyTitaniteMine() {
     if (!titaniteUnlocked) return;
     const cost = getCostTitaniteMine();
@@ -333,22 +337,57 @@ function buyTitaniteMine() {
     recalcProduction();
     updateUI();
 }
+
 function upgradeDeuteriumStorageAction() {
     if (upgradeDeuteriumStorage()) updateUI();
 }
 
-// Mise à jour générale
+// Mise à jour générale de l'interface
 function updateUI() {
-    // Ressources
+    // --- Ressources dans la barre supérieure ---
     document.getElementById('crystalAmount').textContent = formatNumber(resources.crystal);
     document.getElementById('metalAmount').textContent = formatNumber(resources.metal);
-    document.getElementById('crystalRate').textContent = `+${formatNumber(crystalProduction,1)}/sec`;
-    document.getElementById('metalRate').textContent = `+${formatNumber(metalProduction,1)}/sec`;
+    document.getElementById('crystalRate').textContent = `+${formatNumber(crystalProduction, 1)}/sec`;
+    document.getElementById('metalRate').textContent = `+${formatNumber(metalProduction, 1)}/sec`;
 
     const deutItem = document.getElementById('deutResItem');
     const energyItem = document.getElementById('energyResItem');
     const titaniteItem = document.getElementById('titaniteResItem');
-    // Mine de deutérium
+
+    if (deuteriumUnlocked) {
+        deutItem.style.display = '';
+        const netDeut = deuteriumProduction.sub(deuteriumConsumption);
+        document.getElementById('deuteriumAmount').textContent = formatNumber(resources.deuterium);
+        document.getElementById('deuteriumRate').textContent = `${netDeut.gte(0) ? '+' : ''}${formatNumber(netDeut, 1)}/sec`;
+    } else {
+        deutItem.style.display = 'none';
+    }
+
+    if (powerPlantLevel > 0) {
+        energyItem.style.display = '';
+        document.getElementById('energyAmount').textContent = formatNumber(resources.energy);
+        document.getElementById('energyRate').textContent = `+${formatNumber(energyProduction, 1)}/sec`;
+    } else {
+        energyItem.style.display = 'none';
+    }
+
+    if (titaniteUnlocked) {
+        titaniteItem.style.display = '';
+        document.getElementById('titaniteAmount').textContent = formatNumber(resources.titanite);
+        document.getElementById('titaniteRate').textContent = `+${formatNumber(titaniteProduction, 1)}/sec`;
+    } else {
+        titaniteItem.style.display = 'none';
+    }
+
+    // --- Onglet 1 : Mines de base ---
+    document.getElementById('mineCountCrystal').textContent = minesCount.crystal;
+    document.getElementById('mineCountMetal').textContent = minesCount.metal;
+    document.getElementById('costCrystalDisplay').textContent = formatCost('crystal', getCostCrystalMine());
+    document.getElementById('costMetalDisplay').textContent = formatCost('metal', getCostMetalMine());
+    document.getElementById('buyCrystalBtn').disabled = resources.crystal.lt(getCostCrystalMine());
+    document.getElementById('buyMetalBtn').disabled = resources.metal.lt(getCostMetalMine());
+
+    // Deutérium
     const deutMineRow = document.getElementById('deuteriumMineRow');
     if (deuteriumUnlocked) {
         deutMineRow.style.display = '';
@@ -359,62 +398,50 @@ function updateUI() {
     } else {
         deutMineRow.style.display = 'none';
     }
-    if (powerPlantLevel > 0) {
-        energyItem.style.display = '';
-        document.getElementById('energyAmount').textContent = formatNumber(resources.energy);
-        document.getElementById('energyRate').textContent = `+${formatNumber(energyProduction,1)}/sec`;
-    } else {
-        energyItem.style.display = 'none';
-    }
-    if (titaniteUnlocked) {
-        titaniteItem.style.display = '';
-        document.getElementById('titaniteAmount').textContent = formatNumber(resources.titanite);
-        document.getElementById('titaniteRate').textContent = `+${formatNumber(titaniteProduction,1)}/sec`;
-    } else {
-        titaniteItem.style.display = 'none';
-    }
-
-    // Onglet 1
-    document.getElementById('mineCountCrystal').textContent = minesCount.crystal;
-    document.getElementById('mineCountMetal').textContent = minesCount.metal;
-    document.getElementById('costCrystalDisplay').textContent = formatCost('crystal', getCostCrystalMine());
-    document.getElementById('costMetalDisplay').textContent = formatCost('metal', getCostMetalMine());
-    document.getElementById('buyCrystalBtn').disabled = resources.crystal.lt(getCostCrystalMine());
-    document.getElementById('buyMetalBtn').disabled = resources.metal.lt(getCostMetalMine());
 
     // Améliorations classiques
-    Array.from(document.getElementById('classicUpgrades').children).forEach((row, i) => {
-        const up = upgradesData[i];
-        const costs = getUpgradeCosts(up);
-        const maxLvl = up.maxLevel;
-        const canBuy = up.level < maxLvl && resources.crystal.gte(costs.crystal) && resources.metal.gte(costs.metal);
-        const reduction = getEnergyUpgradeEffect('deuteriumOptimization');
-        const boostCost = new Decimal(up.deuteriumBoostCost).times(Decimal.pow(2, up.deuteriumBoostLevel)).times(1-reduction);
-        const canBoost = deuteriumUnlocked && resources.deuterium.gte(boostCost);
+    const classicContainer = document.getElementById('classicUpgrades');
+    if (classicContainer) {
+        Array.from(classicContainer.children).forEach((row, i) => {
+            if (i >= upgradesData.length) return;
+            const up = upgradesData[i];
+            const costs = getUpgradeCosts(up);
+            const maxLvl = up.maxLevel;
+            const canBuy = up.level < maxLvl && resources.crystal.gte(costs.crystal) && resources.metal.gte(costs.metal);
+            const reduction = getEnergyUpgradeEffect('deuteriumOptimization');
+            const boostCost = new Decimal(up.deuteriumBoostCost).times(Decimal.pow(2, up.deuteriumBoostLevel)).times(1 - reduction);
+            const canBoost = deuteriumUnlocked && resources.deuterium.gte(boostCost);
 
-        let lvlText;
-        if (up.level >= maxLvl) lvlText = 'MAX';
-        else lvlText = `Niv. ${up.level}/${maxLvl}`;
-        if (deuteriumUnlocked) lvlText += ` (Boost ${up.deuteriumBoostLevel})`;
+            let lvlText;
+            if (up.level >= maxLvl) lvlText = 'MAX';
+            else lvlText = `Niv. ${up.level}/${maxLvl}`;
+            if (deuteriumUnlocked) lvlText += ` (Boost ${up.deuteriumBoostLevel})`;
 
-        row.querySelector('.upgrade-name-line').textContent = up.name;
-        row.querySelector('.upgrade-level-line').textContent = lvlText;
-        row.querySelector('.upgrade-desc-line').textContent = up.getDescription();
-        row.querySelector('.cost-crystal').textContent = costs.crystal.gt(0) ? formatCost('crystal', costs.crystal) : '';
-        row.querySelector('.cost-metal').textContent = costs.metal.gt(0) ? formatCost('metal', costs.metal) : '';
-        const buyBtn = row.querySelector('.buy-classic');
-        buyBtn.disabled = !canBuy;
-        buyBtn.textContent = up.level >= maxLvl ? 'OK' : 'Acheter';
-        const boostBtn = row.querySelector('.boost-deuterium');
-        boostBtn.style.display = deuteriumUnlocked ? '' : 'none';
-        boostBtn.disabled = !canBoost;
-        boostBtn.textContent = `Boost (${formatCost('deuterium', boostCost)})`;
-    });
+            row.querySelector('.upgrade-name-line').textContent = up.name;
+            row.querySelector('.upgrade-level-line').textContent = lvlText;
+            row.querySelector('.upgrade-desc-line').textContent = up.getDescription();
+            row.querySelector('.cost-crystal').textContent = costs.crystal.gt(0) ? formatCost('crystal', costs.crystal) : '';
+            row.querySelector('.cost-metal').textContent = costs.metal.gt(0) ? formatCost('metal', costs.metal) : '';
 
-    // Onglet 2
+            const buyBtn = row.querySelector('.buy-classic');
+            if (buyBtn) {
+                buyBtn.disabled = !canBuy;
+                buyBtn.textContent = up.level >= maxLvl ? 'OK' : 'Acheter';
+            }
+            const boostBtn = row.querySelector('.boost-deuterium');
+            if (boostBtn) {
+                boostBtn.style.display = deuteriumUnlocked ? '' : 'none';
+                boostBtn.disabled = !canBoost;
+                boostBtn.textContent = `Boost (${formatCost('deuterium', boostCost)})`;
+            }
+        });
+    }
+
+    // --- Onglet 2 : Énergie & Deutérium ---
     const deutSection = document.getElementById('deutSection');
     const centraleSection = document.getElementById('centraleSection');
     const energyUpSection = document.getElementById('energyUpgradesSection');
+
     if (deuteriumUnlocked) {
         deutSection.style.display = '';
         document.getElementById('storageLevelText').textContent = `Niv. ${deuteriumStorageLevel}`;
@@ -437,8 +464,8 @@ function updateUI() {
         centraleSection.style.display = '';
         document.getElementById('powerPlantLevel').textContent = powerPlantLevel;
         document.getElementById('powerPlantMaxLevel').textContent = getMaxPowerPlantLevel();
-        document.getElementById('deuteriumConsume').textContent = formatNumber(getDeuteriumConsumption(),1);
-        document.getElementById('energyProd').textContent = formatNumber(getEnergyProduction(),1);
+        document.getElementById('deuteriumConsume').textContent = formatNumber(getDeuteriumConsumption(), 1);
+        document.getElementById('energyProd').textContent = formatNumber(getEnergyProduction(), 1);
         const buyBtn = document.getElementById('buyPowerPlantBtn');
         if (powerPlantLevel < getMaxPowerPlantLevel()) {
             const cost = getPowerPlantCost();
@@ -449,8 +476,8 @@ function updateUI() {
             buyBtn.style.display = 'none';
         }
         document.getElementById('downgradePowerPlantBtn').style.display = powerPlantLevel > 0 ? '' : 'none';
-        document.getElementById('powerAlarm').style.display = (resources.deuterium.eq(0) && powerPlantLevel>0) ? '' : 'none';
-        energyUpSection.style.display = (powerPlantLevel>0) ? '' : 'none';
+        document.getElementById('powerAlarm').style.display = (resources.deuterium.eq(0) && powerPlantLevel > 0) ? '' : 'none';
+        energyUpSection.style.display = (powerPlantLevel > 0) ? '' : 'none';
     } else {
         centraleSection.style.display = 'none';
         energyUpSection.style.display = 'none';
@@ -458,25 +485,32 @@ function updateUI() {
 
     // Améliorations énergétiques
     if (powerPlantLevel > 0) {
-        Array.from(document.getElementById('energyUpgradesContainer').children).forEach((row, i) => {
-            const eu = energyUpgradesData[i];
-            const maxed = eu.level >= eu.maxLevel;
-            const cost = maxed ? new Decimal(0) : new Decimal(eu.baseCost).times(Decimal.pow(eu.costMult, eu.level)).floor();
-            const canAfford = resources.energy.gte(cost);
-            row.querySelector('.upgrade-name-line').textContent = eu.name;
-            row.querySelector('.upgrade-level-line').textContent = `Niv. ${eu.level}`;
-            row.querySelector('.upgrade-desc-line').textContent = eu.getDescription();
-            row.querySelector('.cost-energy').textContent = maxed ? 'MAX' : formatCost('energy', cost);
-            const buyBtn = row.querySelector('.buy-energy');
-            buyBtn.disabled = maxed || !canAfford;
-            buyBtn.textContent = maxed ? 'OK' : 'Acheter';
-        });
+        const energyContainer = document.getElementById('energyUpgradesContainer');
+        if (energyContainer) {
+            Array.from(energyContainer.children).forEach((row, i) => {
+                if (i >= energyUpgradesData.length) return;
+                const eu = energyUpgradesData[i];
+                const maxed = eu.level >= eu.maxLevel;
+                const cost = maxed ? new Decimal(0) : new Decimal(eu.baseCost).times(Decimal.pow(eu.costMult, eu.level)).floor();
+                const canAfford = resources.energy.gte(cost);
+                row.querySelector('.upgrade-name-line').textContent = eu.name;
+                row.querySelector('.upgrade-level-line').textContent = `Niv. ${eu.level}`;
+                row.querySelector('.upgrade-desc-line').textContent = eu.getDescription();
+                row.querySelector('.cost-energy').textContent = maxed ? 'MAX' : formatCost('energy', cost);
+                const buyBtn = row.querySelector('.buy-energy');
+                if (buyBtn) {
+                    buyBtn.disabled = maxed || !canAfford;
+                    buyBtn.textContent = maxed ? 'OK' : 'Acheter';
+                }
+            });
+        }
     }
 
-    // Onglet 3
+    // --- Onglet 3 : Titanite & Automatisation ---
     const titaniteMineSection = document.getElementById('titaniteMineSection');
     const titaniteUpSection = document.getElementById('titaniteUpgradesSection');
     const autoSection = document.getElementById('automationSection');
+
     if (titaniteUnlocked) {
         titaniteMineSection.style.display = '';
         document.getElementById('mineCountTitanite').textContent = minesCount.titanite;
@@ -485,19 +519,25 @@ function updateUI() {
         document.getElementById('buyTitaniteBtn').disabled = resources.crystal.lt(costT.crystal) || resources.metal.lt(costT.metal) || resources.deuterium.lt(costT.deuterium);
 
         titaniteUpSection.style.display = '';
-        Array.from(document.getElementById('titaniteUpgradesContainer').children).forEach((row, i) => {
-            const tu = titaniteUpgradesData[i];
-            const maxed = tu.level >= tu.maxLevel;
-            const cost = maxed ? new Decimal(0) : new Decimal(tu.baseCost).times(Decimal.pow(tu.costMult, tu.level)).floor();
-            const canAfford = resources.titanite.gte(cost);
-            row.querySelector('.upgrade-name-line').textContent = tu.name;
-            row.querySelector('.upgrade-level-line').textContent = `Niv. ${tu.level}`;
-            row.querySelector('.upgrade-desc-line').textContent = tu.getDescription();
-            row.querySelector('.cost-titanite').textContent = maxed ? 'MAX' : formatCost('titanite', cost);
-            const buyBtn = row.querySelector('.buy-titanite');
-            buyBtn.disabled = maxed || !canAfford;
-            buyBtn.textContent = maxed ? 'OK' : 'Acheter';
-        });
+        const titaniteContainer = document.getElementById('titaniteUpgradesContainer');
+        if (titaniteContainer) {
+            Array.from(titaniteContainer.children).forEach((row, i) => {
+                if (i >= titaniteUpgradesData.length) return;
+                const tu = titaniteUpgradesData[i];
+                const maxed = tu.level >= tu.maxLevel;
+                const cost = maxed ? new Decimal(0) : new Decimal(tu.baseCost).times(Decimal.pow(tu.costMult, tu.level)).floor();
+                const canAfford = resources.titanite.gte(cost);
+                row.querySelector('.upgrade-name-line').textContent = tu.name;
+                row.querySelector('.upgrade-level-line').textContent = `Niv. ${tu.level}`;
+                row.querySelector('.upgrade-desc-line').textContent = tu.getDescription();
+                row.querySelector('.cost-titanite').textContent = maxed ? 'MAX' : formatCost('titanite', cost);
+                const buyBtn = row.querySelector('.buy-titanite');
+                if (buyBtn) {
+                    buyBtn.disabled = maxed || !canAfford;
+                    buyBtn.textContent = maxed ? 'OK' : 'Acheter';
+                }
+            });
+        }
 
         autoSection.style.display = '';
         automations.forEach(auto => {
@@ -530,36 +570,40 @@ function updateUI() {
 
 function updateSaveInfo() {
     const info = document.getElementById('saveInfo');
-    if (lastSaveTimestamp) {
-        info.textContent = `Dernière sauvegarde : ${new Date(lastSaveTimestamp).toLocaleTimeString()}`;
-    } else {
-        info.textContent = 'Aucune sauvegarde récente.';
+    if (info) {
+        if (lastSaveTimestamp) {
+            info.textContent = `Dernière sauvegarde : ${new Date(lastSaveTimestamp).toLocaleTimeString()}`;
+        } else {
+            info.textContent = 'Aucune sauvegarde récente.';
+        }
     }
 }
 
-// Événements globaux (sauvegarde) déjà dans initGlobalEvents, mais on les conserve dans main.js
+// Événements globaux (sauvegarde)
 function initGlobalEvents() {
     const floatingBtn = document.getElementById('saveFloatingBtn');
     const overlay = document.getElementById('saveOverlay');
     const closeBtn = document.getElementById('closeOverlayBtn');
-    floatingBtn.addEventListener('click', () => { overlay.style.display = 'flex'; updateSaveInfo(); });
-    closeBtn.addEventListener('click', () => overlay.style.display = 'none');
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
+    if (floatingBtn && overlay && closeBtn) {
+        floatingBtn.addEventListener('click', () => { overlay.style.display = 'flex'; updateSaveInfo(); });
+        closeBtn.addEventListener('click', () => overlay.style.display = 'none');
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
+    }
 
-    document.getElementById('saveBtn').addEventListener('click', () => {
+    document.getElementById('saveBtn')?.addEventListener('click', () => {
         saveToLocalStorage();
         lastSaveTimestamp = Date.now();
         updateSaveInfo();
         updateUI();
     });
-    document.getElementById('loadBtn').addEventListener('click', () => {
+    document.getElementById('loadBtn')?.addEventListener('click', () => {
         if (loadFromLocalStorage()) {
             lastSaveTimestamp = Date.now();
             updateUI();
             updateSaveInfo();
         } else alert('Aucune sauvegarde trouvée.');
     });
-    document.getElementById('exportBtn').addEventListener('click', () => {
+    document.getElementById('exportBtn')?.addEventListener('click', () => {
         const data = getSaveData();
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
@@ -567,8 +611,8 @@ function initGlobalEvents() {
         a.download = 'mines-hex-save.json';
         a.click();
     });
-    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
-    document.getElementById('importFile').addEventListener('change', (e) => {
+    document.getElementById('importBtn')?.addEventListener('click', () => document.getElementById('importFile').click());
+    document.getElementById('importFile')?.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
@@ -585,7 +629,7 @@ function initGlobalEvents() {
         };
         reader.readAsText(file);
     });
-    document.getElementById('resetBtn').addEventListener('click', () => {
+    document.getElementById('resetBtn')?.addEventListener('click', () => {
         if (confirm('Réinitialiser ?')) {
             resetGame();
             lastSaveTimestamp = null;
