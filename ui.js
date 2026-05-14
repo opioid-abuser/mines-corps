@@ -81,6 +81,16 @@ function buildTabBasic() {
                         <span class="mine-cost-display" id="costMetalDisplay"></span>
                     </div>
                 </div>
+                <div class="mine-item" id="deuteriumMineRow" style="display: none;">
+                    <div class="mine-info">
+                        <span class="mine-label deuterium-color">💧 Deutérium</span>
+                        <span class="mine-count" id="mineCountDeuterium">0</span>
+                    </div>
+                    <div class="mine-action">
+                        <button class="mine-buy-btn" id="buyDeuteriumBtn">Acheter</button>
+                        <span class="mine-cost-display" id="costDeuteriumDisplay"></span>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="panel-section">
@@ -92,6 +102,7 @@ function buildTabBasic() {
     // Événements des mines
     document.getElementById('buyCrystalBtn').addEventListener('click', buyCrystalMine);
     document.getElementById('buyMetalBtn').addEventListener('click', buyMetalMine);
+    document.getElementById('buyDeuteriumBtn').addEventListener('click', buyDeuteriumMine);
 }
 
 // Onglet 2 : Énergie & Deutérium
@@ -337,13 +348,16 @@ function updateUI() {
     const deutItem = document.getElementById('deutResItem');
     const energyItem = document.getElementById('energyResItem');
     const titaniteItem = document.getElementById('titaniteResItem');
+    // Mine de deutérium
+    const deutMineRow = document.getElementById('deuteriumMineRow');
     if (deuteriumUnlocked) {
-        deutItem.style.display = '';
-        const netDeut = deuteriumProduction.sub(deuteriumConsumption);
-        document.getElementById('deuteriumAmount').textContent = formatNumber(resources.deuterium);
-        document.getElementById('deuteriumRate').textContent = `${netDeut.gte(0)?'+':''}${formatNumber(netDeut,1)}/sec`;
+        deutMineRow.style.display = '';
+        document.getElementById('mineCountDeuterium').textContent = minesCount.deuterium;
+        const costD = getCostDeuteriumMine();
+        document.getElementById('costDeuteriumDisplay').textContent = `${formatCost('crystal', costD.crystal)} ${formatCost('metal', costD.metal)}`;
+        document.getElementById('buyDeuteriumBtn').disabled = resources.crystal.lt(costD.crystal) || resources.metal.lt(costD.metal);
     } else {
-        deutItem.style.display = 'none';
+        deutMineRow.style.display = 'none';
     }
     if (powerPlantLevel > 0) {
         energyItem.style.display = '';

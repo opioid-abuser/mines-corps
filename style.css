@@ -150,7 +150,7 @@ body {
 .mine-action {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: end;
     gap: 0.2rem;
 }
 .mine-buy-btn {
@@ -245,8 +245,8 @@ body {
 
 /* Automatisation */
 .automation-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
 }
 .automation-row {
@@ -259,6 +259,7 @@ body {
     border-radius: 8px;
     padding: 0.5rem 1rem;
     flex-wrap: wrap;
+    box-sizing: border-box;
 }
 .automation-info { flex: 2; min-width: 140px; font-size: 0.85rem; }
 .automation-name { font-weight: 600; font-size: 0.9rem; }
