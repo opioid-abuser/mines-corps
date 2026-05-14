@@ -283,6 +283,13 @@ const titaniteUpgradesData = [
     }*/
 ];
 
+function getUpgradeCosts(up) {
+    return {
+        crystal: new Decimal(up.baseCostCrystal).times(Decimal.pow(up.costMult, up.level)),
+        metal: new Decimal(up.baseCostMetal).times(Decimal.pow(up.costMult, up.level))
+    };
+}
+
 // Fonctions d'achat des améliorations classiques
 function buyUpgrade(upgradeId) {
     const up = upgradesData.find(u => u.id === upgradeId);

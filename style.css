@@ -5,13 +5,11 @@
     --accent-crystal: #4fc3f7;
     --accent-metal: #b0bec5;
     --accent-deuterium: #ce93d8;
-    --accent-energy: #028700;
     --accent-titanite: #e67e22;
+    --accent-energy: #f1c40f;
     --border: #444;
     --button-bg: #333;
     --button-hover: #444;
-    --auto-disabled: #ae0101;
-    --auto-enabled: #3f793f;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,73 +21,31 @@ body {
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 1rem;
+    padding: 2rem;
 }
+
 #game-container {
-    display: flex;
-    gap: 0.8rem;
-    max-width: 1100px;
+    max-width: 900px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Barre des ressources */
+#resources-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
     justify-content: center;
-}
-
-#mines-panel, #upgrades-panel {
     background: var(--panel-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-#resources-panel {
-    background: var(--panel-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border);
     padding: 1rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-/* Même chose pour #energy-storage-panel */
-#energy-storage-panel {
-    background: var(--panel-bg);
     border-radius: 12px;
     border: 1px solid var(--border);
-    padding: 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    display: none;
 }
 
-#mines-panel { flex: 0 0 280px; }
-#upgrades-panel { flex: 1 1 auto; min-width: 400px; }
-
-.mine-action {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2rem;
-}
-
-/* Affichage du coût en dessous du bouton */
-.mine-cost-display {
-    font-size: 0.7rem;
-    opacity: 0.9;
-    white-space: nowrap;
-    color: var(--text);
-}
-
-.mine-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.95rem;
-}
 .resource-item {
+    width: 120px;                /* Largeur fixe pour chaque ressource */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -106,48 +62,120 @@ body {
     font-size: 1.5rem;
     font-weight: 600;
     line-height: 1.2;
+    white-space: nowrap;         /* Empêche le retour à la ligne */
+    overflow: hidden;            /* Cache le débordement */
+    text-overflow: ellipsis;     /* Affiche "..." si le texte est trop long */
+    max-width: 100%;
 }
-.resource-rate {
-    font-size: 0.75rem;
-    opacity: 0.7;
-}
-.resource-label, .mine-label { font-weight: 600; }
-.resource-value, .mine-count { font-size: 1.2rem; font-weight: 600; }
 .resource-rate { font-size: 0.75rem; opacity: 0.7; }
-.mine-cost { font-size: 0.8rem; opacity: 0.8; }
-.mine-buy-btn {
-    background: #3a5a4a;
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-.mine-buy-btn:hover:not(:disabled) { background: var(--button-hover); }
-.mine-buy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .crystal-color { color: var(--accent-crystal); }
 .metal-color { color: var(--accent-metal); }
 .deuterium-color { color: var(--accent-deuterium); }
 .titanite-color { color: var(--accent-titanite); }
+.energy-color { color: var(--accent-energy); }
 
+/* Onglets */
+#tabs {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+.tab-btn {
+    background: var(--button-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px 8px 0 0;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: none;
+}
+.tab-btn.active {
+    background: var(--panel-bg);
+    font-weight: 600;
+}
+.tab-btn:hover { background: var(--button-hover); }
+
+/* Contenu des onglets */
+#tab-content {
+    background: var(--panel-bg);
+    border-radius: 0 0 12px 12px;
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 1.5rem;
+    min-height: 300px;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Panels internes */
+.panel-section {
+    margin-bottom: 1.5rem;
+}
 .section-title {
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     opacity: 0.9;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
 }
 
+/* Mines */
+.mine-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.mine-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+}
+.mine-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.mine-label { font-weight: 600; font-size: 0.95rem; }
+.mine-count { font-size: 0.85rem; opacity: 0.8; }
+.mine-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+.mine-buy-btn {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    background: var(--button-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    cursor: pointer;
+}
+.mine-buy-btn:hover:not(:disabled) { background: var(--button-hover); }
+.mine-buy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.mine-cost-display {
+    font-size: 0.7rem;
+    opacity: 0.9;
+    white-space: nowrap;
+}
+
+/* Améliorations */
 .upgrades-grid {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    max-height: 500px;
-    overflow-y: auto;
 }
-
 .upgrade-row {
     display: flex;
     justify-content: space-between;
@@ -160,8 +188,9 @@ body {
     flex-wrap: wrap;
 }
 .upgrade-info { flex: 2; min-width: 150px; }
-.upgrade-name { font-weight: 600; font-size: 0.9rem; }
-.upgrade-desc { font-size: 0.75rem; opacity: 0.8; }
+.upgrade-name-line { font-weight: 600; font-size: 0.9rem; }
+.upgrade-level-line { font-size: 0.8rem; opacity: 0.9; margin-top: 0.1rem; }
+.upgrade-desc-line { font-size: 0.75rem; opacity: 0.8; margin-top: 0.15rem; line-height: 1.3; }
 .upgrade-cost {
     flex: 1;
     display: flex;
@@ -171,7 +200,7 @@ body {
     white-space: nowrap;
 }
 .upgrade-actions { display: flex; gap: 0.3rem; align-items: center; }
-.mine-buy-btn,.upgrade-buy {
+.upgrade-buy {
     padding: 0.3rem 0.8rem;
     font-size: 0.8rem;
     background: #3a5a4a;
@@ -179,6 +208,7 @@ body {
     cursor: pointer;
     border-radius: 6px;
     color: var(--text);
+    border: 1px solid var(--border);
 }
 .upgrade-buy:hover:not(:disabled) { background: #4a6a5a; }
 .upgrade-buy:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -190,128 +220,34 @@ body {
     cursor: pointer;
     border-radius: 6px;
     color: var(--text);
+    border: 1px solid var(--border);
 }
 .boost-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.upgrade-name-line {
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-.upgrade-level-line {
-    font-size: 0.8rem;
-    opacity: 0.9;
-    margin-top: 0.1rem;
-}
-.upgrade-desc-line {
-    font-size: 0.75rem;
-    opacity: 0.8;
-    margin-top: 0.15rem;
-    line-height: 1.3;
-}
-
-.power-plant-section, .energy-upgrades-section, .titanite-upgrades-section {
-    margin-top: 1rem;
-    border-top: 1px solid var(--border);
-    padding-top: 0.8rem;
-}
-
-.energy-accent { color: var(--accent-energy);}
-
-.energy-bar {
-    width: 100%;
-    height: 10px;
-    background: #333;
-    border-radius: 5px;
-    overflow: hidden;
+/* Centrale & réservoir */
+.centrale-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
     margin: 0.5rem 0;
 }
-.energy-fill { height: 100%; background: #ce93d8; transition: width 0.2s; }
-.energy-text { font-size: 0.8rem; text-align: center; }
-
-#saveFloatingBtn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--panel-bg);
+.centrale-controls button {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    background: var(--button-bg);
     border: 1px solid var(--border);
     color: var(--text);
-    font-size: 1.2rem;
-    font-weight: bold;
+    border-radius: 6px;
     cursor: pointer;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
-#saveFloatingBtn:hover { background: var(--button-hover); }
+.centrale-controls button:hover:not(:disabled) { background: var(--button-hover); }
 
-.overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); display: flex; align-items: center;
-    justify-content: center; z-index: 2000;
-}
-.overlay-content {
-    background: var(--panel-bg); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1rem; min-width: 300px;
-    max-width: 90%; position: relative; text-align: center;
-}
-.close-btn {
-    position: absolute; top: 10px; right: 15px;
-    background: none; border: none; color: var(--text);
-    font-size: 1.8rem; cursor: pointer; opacity: 0.7;
-}
-.save-buttons { display: flex; flex-direction: column; gap: 0.75rem; margin: 1.5rem 0 1rem; }
-.save-buttons button {
-    padding: 0.6rem 1rem; font-size: 0.9rem;
-    background: #3a4a5a; border-color: #5a6a7a;
-    color: var(--text); border-radius: 8px; cursor: pointer;
-}
-.save-buttons button:hover { background: #4a5a6a; }
-.save-info { font-size: 0.8rem; opacity: 0.8; }
-
-@media (max-width: 800px) {
-    #game-container { flex-direction: column; align-items: center; }
-    #resources-panel, #mines-panel, #upgrades-panel { width: 100%; max-width: 500px; }
-}
-
-#energy-storage-panel {
-    background: var(--panel-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 0.8rem 1rem;
+/* Automatisation */
+.automation-grid {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    flex: 0 0 220px; /* même largeur que resources-panel */
-}
-
-.left-column {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    flex: 0 0 220px; /* Largeur fixe comme avant */
-}
-
-/* Les panneaux à l'intérieur prennent toute la largeur de la colonne */
-#resources-panel,
-#energy-storage-panel {
-    width: 100%;
-    flex: none;
-}
-
-#automation-panel {
-    background: var(--panel-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    flex: 0 0 auto;
-    width: 100%;
+    gap: 0.5rem;
 }
 .automation-row {
     display: flex;
@@ -324,29 +260,11 @@ body {
     padding: 0.5rem 1rem;
     flex-wrap: wrap;
 }
-.automation-info {
-    flex: 2;
-    min-width: 140px;
-    font-size: 0.85rem;
-}
-.automation-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-.automation-cost {
-    font-size: 0.75rem;
-    opacity: 0.8;
-    margin-top: 0.2rem;
-}
-.automation-status {
-    font-size: 0.75rem;
-    opacity: 0.7;
-}
-.automation-actions {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-}
+.automation-info { flex: 2; min-width: 140px; font-size: 0.85rem; }
+.automation-name { font-weight: 600; font-size: 0.9rem; }
+.automation-cost { font-size: 0.75rem; opacity: 0.8; margin-top: 0.2rem; }
+.automation-status { font-size: 0.75rem; opacity: 0.7; }
+.automation-actions { display: flex; gap: 0.4rem; align-items: center; }
 .automation-buy-btn, .automation-toggle-btn {
     padding: 0.3rem 0.8rem;
     font-size: 0.8rem;
@@ -355,16 +273,40 @@ body {
     cursor: pointer;
     border: 1px solid var(--border);
 }
-.automation-buy-btn {
-    background: #3a5a4a;
-    border-color: #5a7a6a;
-}
-.automation-buy-btn:hover:not(:disabled) { background: #fff; }
+.automation-buy-btn { background: #3a5a4a; border-color: #5a7a6a; }
+.automation-buy-btn:hover:not(:disabled) { background: #4a6a5a; }
 .automation-buy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.automation-toggle-btn { background: #5a3a6a; border-color: #7a5a8a; }
+.automation-toggle-btn.active { background: #4a5a4a; }
+.automation-toggle-btn:hover:not(:disabled) { background: #6a4a7a; }
 
-.automation-toggle-btn {
-    background: #ae0101;
-    border-color: #ae0101;
+/* Overlay sauvegarde */
+#saveFloatingBtn {
+    position: fixed; top: 20px; left: 20px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--panel-bg); border: 1px solid var(--border);
+    color: var(--text); font-size: 1.2rem; font-weight: bold;
+    cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center;
 }
-.automation-toggle-btn.active { background: var(--auto-enabled); border-color: var(--border);}
-.automation-toggle-btn:hover:not(:disabled) { background: var(--auto-disabled); border-color:var(--border);}
+.overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: flex; align-items: center;
+    justify-content: center; z-index: 2000;
+}
+.overlay-content {
+    background: var(--panel-bg); border: 1px solid var(--border);
+    border-radius: 12px; padding: 2rem; min-width: 300px;
+    max-width: 90%; position: relative; text-align: center;
+}
+.close-btn {
+    position: absolute; top: 10px; right: 15px;
+    background: none; border: none; color: var(--text);
+    font-size: 1.8rem; cursor: pointer; opacity: 0.7;
+}
+.save-buttons { display: flex; flex-direction: column; gap: 0.75rem; margin: 1.5rem 0 1rem; }
+.save-buttons button {
+    padding: 0.6rem 1.2rem; font-size: 0.9rem;
+    background: #3a4a5a; border-color: #5a6a7a;
+    color: var(--text); border-radius: 8px; cursor: pointer;
+}
+.save-info { font-size: 0.8rem; opacity: 0.8; }
