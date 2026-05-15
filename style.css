@@ -36,10 +36,10 @@ body {
 #resources-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 1rem;
     justify-content: center;
     background: var(--panel-bg);
-    padding: 1rem 1.5rem;
+    padding: 0.5rem 1rem;
     border-radius: 12px;
     border: 1px solid var(--border);
 }

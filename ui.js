@@ -111,13 +111,13 @@ function buildTabEnergy() {
     tab.innerHTML = `
         <div class="panel-section" id="deutSection" style="display:none;">
             <div class="section-title">Réservoir de Deutérium</div>
-            <div>Niveau : <span id="storageLevelText">Niv. 1</span> / <span id="storageMaxLevel">10</span></div>
+            <div><span id="storageLevelText">Niv. 1</span> / <span id="storageMaxLevel">10</span></div>
             <div>Capacité : <span id="storageCapacityText">40</span></div>
             <button id="upgradeStorageBtn">Améliorer réservoir</button>
         </div>
         <div class="panel-section" id="centraleSection" style="display:none;">
             <div class="section-title">Centrale électrique</div>
-            <div>Niveau : <span id="powerPlantLevel">0</span> / <span id="powerPlantMaxLevel">10</span></div>
+            <div>Niv. <span id="powerPlantLevel">0</span> / <span id="powerPlantMaxLevel">10</span></div>
             <div>Consommation : <span id="deuteriumConsume">0</span>/sec</div>
             <div>Production : <span id="energyProd">0</span>/sec</div>
             <div class="centrale-controls">
@@ -147,7 +147,7 @@ function buildTabTitanite() {
             <div class="mine-item">
                 <div class="mine-info">
                     <span class="mine-label titanite-color">🔶 Titanite</span>
-                    <span class="mine-count" id="mineCountTitanite">0</span>
+                    <span class="mine-count" id="mineCountTitanite">0<span> 
                 </div>
                 <div class="mine-action">
                     <button class="mine-buy-btn" id="buyTitaniteBtn">Acheter</button>
@@ -380,8 +380,8 @@ function updateUI() {
     }
 
     // --- Onglet 1 : Mines de base ---
-    document.getElementById('mineCountCrystal').textContent = minesCount.crystal;
-    document.getElementById('mineCountMetal').textContent = minesCount.metal;
+    document.getElementById('mineCountCrystal').textContent = 'Niv. '+minesCount.crystal;
+    document.getElementById('mineCountMetal').textContent = 'Niv. '+minesCount.metal;
     document.getElementById('costCrystalDisplay').textContent = formatCost('crystal', getCostCrystalMine());
     document.getElementById('costMetalDisplay').textContent = formatCost('metal', getCostMetalMine());
     document.getElementById('buyCrystalBtn').disabled = resources.crystal.lt(getCostCrystalMine());
@@ -391,7 +391,7 @@ function updateUI() {
     const deutMineRow = document.getElementById('deuteriumMineRow');
     if (deuteriumUnlocked) {
         deutMineRow.style.display = '';
-        document.getElementById('mineCountDeuterium').textContent = minesCount.deuterium;
+        document.getElementById('mineCountDeuterium').textContent = 'Niv. '+minesCount.deuterium;
         const costD = getCostDeuteriumMine();
         document.getElementById('costDeuteriumDisplay').textContent = `${formatCost('crystal', costD.crystal)} ${formatCost('metal', costD.metal)}`;
         document.getElementById('buyDeuteriumBtn').disabled = resources.crystal.lt(costD.crystal) || resources.metal.lt(costD.metal);
@@ -513,7 +513,7 @@ function updateUI() {
 
     if (titaniteUnlocked) {
         titaniteMineSection.style.display = '';
-        document.getElementById('mineCountTitanite').textContent = minesCount.titanite;
+        document.getElementById('mineCountTitanite').textContent = 'Niv. '+minesCount.titanite;
         const costT = getCostTitaniteMine();
         document.getElementById('costTitaniteDisplay').textContent = `${formatCost('crystal', costT.crystal)} ${formatCost('metal', costT.metal)} ${formatCost('deuterium', costT.deuterium)}`;
         document.getElementById('buyTitaniteBtn').disabled = resources.crystal.lt(costT.crystal) || resources.metal.lt(costT.metal) || resources.deuterium.lt(costT.deuterium);
