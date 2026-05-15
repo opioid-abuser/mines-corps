@@ -25,9 +25,10 @@ let titaniteUnlocked = false;
 const BASE_COST_CRYSTAL = 10;
 const BASE_COST_METAL = 10;
 const BASE_COST_DEUTERIUM = { crystal: 100, metal: 50 };
-const BASE_COST_TITANITE = { crystal: 500, metal: 250, deuterium: 100 };
+const BASE_COST_TITANITE = { crystal: 5000, metal: 2500, deuterium: 1000 };
 const COST_GROWTH = 1.15;
 const COST_GROWTH_DEUTERIUM = 1.65
+const COST_GROWTH_TITANITE = 1.66
 const DEUTERIUM_PER_MINE = 0.1;
 const TITANITE_PER_MINE = 0.05;
 
@@ -74,8 +75,8 @@ function getCostTitaniteMine() {
     const count = minesCount.titanite;
     const reduction = getUpgradeEffect('costReduction');
     return {
-        crystal: Decimal.max(1, new Decimal(BASE_COST_TITANITE.crystal).times(Decimal.pow(COST_GROWTH, count)).times(1 - reduction)),
-        metal: Decimal.max(1, new Decimal(BASE_COST_TITANITE.metal).times(Decimal.pow(COST_GROWTH, count)).times(1 - reduction)),
+        crystal: Decimal.max(1, new Decimal(BASE_COST_TITANITE.crystal).times(Decimal.pow(COST_GROWTH_TITANITE, count)).times(1 - reduction)),
+        metal: Decimal.max(1, new Decimal(BASE_COST_TITANITE.metal).times(Decimal.pow(COST_GROWTH_TITANITE, count)).times(1 - reduction)),
         deuterium: Decimal.max(1, new Decimal(BASE_COST_TITANITE.deuterium).times(Decimal.pow(COST_GROWTH, count)).times(1 - reduction))
     };
 }

@@ -342,23 +342,135 @@ function upgradeDeuteriumStorageAction() {
     if (upgradeDeuteriumStorage()) updateUI();
 }
 
+function generateCostTable() {
+    const COST_GROWTH = 1.15;
+    const BASE_COST_CRYSTAL = 10;
+    const BASE_COST_METAL = 10;
+    const BASE_COST_DEUTERIUM = { crystal: 100, metal: 50 };
+    const BASE_COST_TITANITE = { crystal: 500, metal: 250, deuterium: 100 };
+
+    // Fonction utilitaire pour calculer un coût formaté
+    function cost(base, growth, level) {
+        return Decimal.floor(new Decimal(base).times(Decimal.pow(growth, level)));
+    }
+
+    let html = '';
+
+    // --- Mines ---
+    html += '<h4>Mines</h4><table><tr><th>Niveau</th><th>Cristal (💎)</th><th>Métal (⚙️)</th><th>Deutérium (💧/⚙️)</th><th>Titanite (💎/⚙️/💧)</th></tr>';
+    for (let n = 0; n < 50; n++) {
+        const c = cost(BASE_COST_CRYSTAL, COST_GROWTH, n);
+        const m = cost(BASE_COST_METAL, COST_GROWTH, n);
+        const dC = cost(BASE_COST_DEUTERIUM.crystal, COST_GROWTH, n);
+        const dM = cost(BASE_COST_DEUTERIUM.metal, COST_GROWTH, n);
+        const tC = cost(BASE_COST_TITANITE.crystal, COST_GROWTH, n);
+        const tM = cost(BASE_COST_TITANITE.metal, COST_GROWTH, n);
+        const tD = cost(BASE_COST_TITANITE.deuterium, COST_GROWTH, n);
+        html += `<tr>
+            <td>${n}</td>
+            <td>${formatNumber(c)}</td>
+            <td>${formatNumber(m)}</td>
+            <td>${formatNumber(dC)} / ${formatNumber(dM)}</td>
+            <td>${formatNumber(tC)} / ${formatNumber(tM)} / ${formatNumber(tD)}</td>
+        </tr>`;
+    }
+    html += '</table>';
+
+    // --- Améliorations classiques ---
+    if (typeof upgradesData !== 'undefined') {
+        upgradesData.forEach(up => {
+            if (up.baseCostCrystal === undefined && up.baseCostMetal === undefined) return;
+            html += `<h4>${up.name}</h4><table><tr><th>Niveau</th><th>Cristal</th><th>Métal</th></tr>`;
+            for (let level = 0; level < 50; level++) {
+                if (level >= up.maxLevel) break; // s'arrêter au niveau max
+                const cCost = cost(up.baseCostCrystal, up.costMult, level);
+                const mCost = cost(up.baseCostMetal, up.costMult, level);
+                html += `<tr><td>${level}</td><td>${formatNumber(cCost)}</td><td>${formatNumber(mCost)}</td></tr>`;
+            }
+            html += '</table>';
+        });
+    }
+
+    // --- Améliorations énergétiques ---
+    if (typeof energyUpgradesData !== 'undefined') {
+        energyUpgradesData.forEach(eu => {
+            html += `<h4>${eu.name} (coût en ⚡)</h4><table><tr><th>Niveau</th><th>Énergie</th></tr>`;
+            for (let level = 0; level < 50; level++) {
+                if (level >= eu.maxLevel) break;
+                const eCost = cost(eu.baseCost, eu.costMult, level);
+                html += `<tr><td>${level}</td><td>${formatNumber(eCost)}</td></tr>`;
+            }
+            html += '</table>';
+        });
+    }
+
+    // --- Améliorations Titanite ---
+    if (typeof titaniteUpgradesData !== 'undefined') {
+        titaniteUpgradesData.forEach(tu => {
+            html += `<h4>${tu.name} (coût en 🔶)</h4><table><tr><th>Niveau</th><th>Titanite</th></tr>`;
+            for (let level = 0; level < 50; level++) {
+                if (level >= tu.maxLevel) break;
+                const tCost = cost(tu.baseCost, tu.costMult, level);
+                html += `<tr><td>${level}</td><td>${formatNumber(tCost)}</td></tr>`;
+            }
+            html += '</table>';
+        });
+    }
+
+    return html;
+}
+
+function showCostTableOverlay() {
+    const content = document.getElementById('costTableContent');
+    if (content) {
+        content.innerHTML = generateCostTable();
+    }
+    document.getElementById('costTableOverlay').style.display = 'flex';
+}
+
+function updateTabsVisibility() {
+    const tabEnergy = document.getElementById('tab-btn-energy') || document.querySelector('.tab-btn[data-tab="tab-energy"]');
+    const tabTitanite = document.getElementById('tab-btn-titanite') || document.querySelector('.tab-btn[data-tab="tab-titanite"]');
+
+    if (tabEnergy) {
+        tabEnergy.style.display = deuteriumUnlocked ? '' : 'none';
+    }
+    if (tabTitanite) {
+        tabTitanite.style.display = titaniteUnlocked ? '' : 'none';
+    }
+
+    // Si l'onglet actif est caché, basculer sur l'onglet de base
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (activeTab && activeTab.style.display === 'none') {
+        const firstTab = document.getElementById('tab-btn-basic') || document.querySelector('.tab-btn[data-tab="tab-basic"]');
+        if (firstTab) {
+            // Simuler un clic sur le premier onglet
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            firstTab.classList.add('active');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            const targetPanel = document.getElementById('tab-basic');
+            if (targetPanel) targetPanel.classList.add('active');
+        }
+    }
+}
+
 // Mise à jour générale de l'interface
 function updateUI() {
     // --- Ressources dans la barre supérieure ---
     document.getElementById('crystalAmount').textContent = formatNumber(resources.crystal);
     document.getElementById('metalAmount').textContent = formatNumber(resources.metal);
-    document.getElementById('crystalRate').textContent = `+${formatNumber(crystalProduction, 1)}/sec`;
-    document.getElementById('metalRate').textContent = `+${formatNumber(metalProduction, 1)}/sec`;
+    document.getElementById('crystalRate').textContent = `+${formatNumber(crystalProduction)}/sec`;
+    document.getElementById('metalRate').textContent = `+${formatNumber(metalProduction)}/sec`;
 
     const deutItem = document.getElementById('deutResItem');
     const energyItem = document.getElementById('energyResItem');
     const titaniteItem = document.getElementById('titaniteResItem');
-
+    updateTabsVisibility()
     if (deuteriumUnlocked) {
         deutItem.style.display = '';
         const netDeut = deuteriumProduction.sub(deuteriumConsumption);
         document.getElementById('deuteriumAmount').textContent = formatNumber(resources.deuterium);
-        document.getElementById('deuteriumRate').textContent = `${netDeut.gte(0) ? '+' : ''}${formatNumber(netDeut, 1)}/sec`;
+        document.getElementById('deuteriumRate').textContent = `${netDeut.gte(0) ? '+' : ''}${formatNumber(netDeut)}/sec`;
     } else {
         deutItem.style.display = 'none';
     }
@@ -366,7 +478,7 @@ function updateUI() {
     if (powerPlantLevel > 0) {
         energyItem.style.display = '';
         document.getElementById('energyAmount').textContent = formatNumber(resources.energy);
-        document.getElementById('energyRate').textContent = `+${formatNumber(energyProduction, 1)}/sec`;
+        document.getElementById('energyRate').textContent = `+${formatNumber(energyProduction)}/sec`;
     } else {
         energyItem.style.display = 'none';
     }
@@ -374,7 +486,7 @@ function updateUI() {
     if (titaniteUnlocked) {
         titaniteItem.style.display = '';
         document.getElementById('titaniteAmount').textContent = formatNumber(resources.titanite);
-        document.getElementById('titaniteRate').textContent = `+${formatNumber(titaniteProduction, 1)}/sec`;
+        document.getElementById('titaniteRate').textContent = `+${formatNumber(titaniteProduction)}/sec`;
     } else {
         titaniteItem.style.display = 'none';
     }
@@ -464,8 +576,8 @@ function updateUI() {
         centraleSection.style.display = '';
         document.getElementById('powerPlantLevel').textContent = powerPlantLevel;
         document.getElementById('powerPlantMaxLevel').textContent = getMaxPowerPlantLevel();
-        document.getElementById('deuteriumConsume').textContent = formatNumber(getDeuteriumConsumption(), 1);
-        document.getElementById('energyProd').textContent = formatNumber(getEnergyProduction(), 1);
+        document.getElementById('deuteriumConsume').textContent = formatNumber(getDeuteriumConsumption());
+        document.getElementById('energyProd').textContent = formatNumber(getEnergyProduction());
         const buyBtn = document.getElementById('buyPowerPlantBtn');
         if (powerPlantLevel < getMaxPowerPlantLevel()) {
             const cost = getPowerPlantCost();
@@ -543,20 +655,20 @@ function updateUI() {
         automations.forEach(auto => {
             const buyBtn = document.getElementById(`autoBuy_${auto.id}`);
             const toggleBtn = document.getElementById(`autoToggle_${auto.id}`);
-            const statusEl = document.getElementById(`autoStatus_${auto.id}`);
-            if (!buyBtn || !toggleBtn || !statusEl) return;
+            //const statusEl = document.getElementById(`autoStatus_${auto.id}`);
+            if (!buyBtn || !toggleBtn ) return;
             if (auto.unlocked) {
                 buyBtn.style.display = 'none';
                 toggleBtn.style.display = '';
                 toggleBtn.textContent = auto.active ? 'Désactiver' : 'Activer';
                 toggleBtn.classList.toggle('active', auto.active);
-                statusEl.textContent = 'Débloqué';
+                //statusEl.textContent = '';
             } else {
                 buyBtn.style.display = '';
                 toggleBtn.style.display = 'none';
                 buyBtn.textContent = `Débloquer (${formatCost('energy', auto.costEnergy)} ${formatCost('titanite', auto.costTitanite)})`;
                 buyBtn.disabled = resources.energy.lt(auto.costEnergy) || resources.titanite.lt(auto.costTitanite);
-                statusEl.textContent = `Coût : ${formatCost('energy', auto.costEnergy)} ${formatCost('titanite', auto.costTitanite)}`;
+                //statusEl.textContent = `Coût : ${formatCost('energy', auto.costEnergy)} ${formatCost('titanite', auto.costTitanite)}`;
             }
         });
     } else {
@@ -644,7 +756,7 @@ function initGlobalEvents() {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'mines-hex-save.json';
+        a.download = 'mines-corps-save.json';
         a.click();
     });
     document.getElementById('importBtn')?.addEventListener('click', () => document.getElementById('importFile').click());
@@ -687,5 +799,16 @@ function initGlobalEvents() {
         updateAchievementsOverlay();
         achBtn.classList.remove('rgb-flash');
         clearTimeout(achBtn._flashTimeout);
+    });
+    // Tableau des coûts
+    const costBtn = document.getElementById('costTableFloatingBtn');
+    const costOverlay = document.getElementById('costTableOverlay');
+    const closeCostBtn = document.getElementById('closeCostTableBtn');
+    costBtn.addEventListener('click', () => {
+        showCostTableOverlay();
+    });
+    closeCostBtn.addEventListener('click', () => costOverlay.style.display = 'none');
+    costOverlay.addEventListener('click', (e) => {
+        if (e.target === costOverlay) costOverlay.style.display = 'none';
     });
 }

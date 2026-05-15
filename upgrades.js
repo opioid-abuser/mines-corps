@@ -39,7 +39,7 @@ const upgradesData = [
             const bonus = 1 + this.deuteriumBoostLevel * 0.05;
             return Math.min(base * bonus, 0.95);
         },
-        get maxLevel() { return this.maxLevelBase + this.deuteriumBoostLevel / 4; },
+        get maxLevel() { return Math.floor(this.maxLevelBase + this.deuteriumBoostLevel / 4); },
         getDescription() {
             const reduction = (this.getEffect(this.level) * 100).toFixed(0);
             return `Réduction : ${reduction}% sur le coût des mines.`;
@@ -103,7 +103,7 @@ const energyUpgradesData = [
         level: 0,
         maxLevel: 20,
         getEffect() { return this.level * 0.2; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% énergie.`; },
+        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% production d\'énergie.`; },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -123,7 +123,7 @@ const energyUpgradesData = [
         level: 0,
         maxLevel: 15,
         getEffect() { return 1 + this.level * 0.1; },
-        getDescription() { return `Multiplie par ${this.getEffect().toFixed(1)}.`; },
+        getDescription() { return `Multiplie par ${this.getEffect().toFixed(1)} la production de cristal et métal.`; },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -138,12 +138,12 @@ const energyUpgradesData = [
         id: 'deuteriumOptimization',
         name: 'Optimisation deutérium',
         baseDescription: 'Réduit le coût des boosts deutérium de 10% par niveau.',
-        baseCost: 25,
-        costMult: 2.2,
+        baseCost: 45,
+        costMult: 2.5,
         level: 0,
         maxLevel: 10,
-        getEffect() { return Math.min(this.level * 0.1, 0.9); },
-        getDescription() { return `Réduction boosts : ${(this.getEffect()*100).toFixed(0)}%.`; },
+        getEffect() { return Math.min(this.level * 0.05, 0.99); },
+        getDescription() { return `Réduction du prix en deutérium des boosts ${(this.getEffect()*100).toFixed(0)}%.`; },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -162,7 +162,7 @@ const energyUpgradesData = [
         level: 0,
         maxLevel: 10,
         getEffect() { return this.level * 0.5; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% capacité.`; },
+        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% capacité d\'énergie.`; },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -186,7 +186,7 @@ const titaniteUpgradesData = [
         level: 0,
         maxLevel: 15,
         getEffect() { return this.level * 0.3; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% énergie.`; },
+        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% production d\'énergie.`; },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -206,7 +206,7 @@ const titaniteUpgradesData = [
         level: 0,
         maxLevel: 10,
         getEffect() { return this.level * 0.5; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% capacité.`; },
+        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% capacité d\'énergie.`; },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -226,7 +226,7 @@ const titaniteUpgradesData = [
         level: 0,
         maxLevel: 5,
         getEffect() { return this.level * 2; },
-        getDescription() { return `+${this.getEffect()} niveaux max.`; },
+        getDescription() { return `+${this.getEffect()} niveaux max réservoir deutérium.`; },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -245,7 +245,7 @@ const titaniteUpgradesData = [
         level: 0,
         maxLevel: 5,
         getEffect() { return this.level * 2; },
-        getDescription() { return `+${this.getEffect()} niveaux max.`; },
+        getDescription() { return `+${this.getEffect()} niveaux max centrale électrique.`; },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();

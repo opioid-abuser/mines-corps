@@ -12,6 +12,7 @@
 <div class="floating-buttons">
     <button id="saveFloatingBtn" title="Sauvegarde">💾</button>
     <button id="achievementsFloatingBtn" title="Succès">🏆</button>
+    <button id="costTableFloatingBtn" title="gear">⚙️</button>
 </div>
 <div id="saveOverlay" class="overlay" style="display: none;">
     <div class="overlay-content">
@@ -40,6 +41,13 @@
         </div>
     </div>
 </div>
+<div id="costTableOverlay" class="overlay" style="display: none;">
+    <div class="overlay-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
+        <button class="close-btn" id="closeCostTableBtn">&times;</button>
+        <h3></h3>
+        <div id="costTableContent"></div>
+    </div>
+</div>
 <!-- Fin boutons flottants -->
 
 <div id="game-container">
@@ -48,9 +56,9 @@
 
     <!-- Onglets -->
     <div id="tabs">
-        <button class="tab-btn active" data-tab="tab-basic">Mines de base</button>
-        <button class="tab-btn" data-tab="tab-energy">Énergie & Deutérium</button>
-        <button class="tab-btn" data-tab="tab-titanite">Titanite & Automatisation</button>
+        <button class="tab-btn active" data-tab="tab-basic" id="tab-btn-basic">Mines de base</button>
+        <button class="tab-btn" data-tab="tab-energy" id="tab-btn-energy">Énergie & Deutérium</button>
+        <button class="tab-btn" data-tab="tab-titanite" id="tab-btn-titanite">Titanite & Automatisation</button>
     </div>
 
     <!-- Contenu des onglets -->

@@ -427,3 +427,23 @@ body {
     from { transform: translateX(-100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+
+#costTableContent table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.8rem;
+}
+#costTableContent th, #costTableContent td {
+    border: 1px solid var(--border);
+    padding: 3px 6px;
+    text-align: right;
+}
+#costTableContent th {
+    background: #333;
+    font-weight: 600;
+}
+#costTableContent h4 {
+    margin: 1rem 0 0.5rem;
+    color: var(--accent-crystal);
+}
