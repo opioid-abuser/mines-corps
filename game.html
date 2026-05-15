@@ -8,8 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/break_infinity.js@2.0.0/dist/break_infinity.min.js"></script>
 </head>
 <body>
-<!-- Bouton sauvegarde -->
-<button id="saveFloatingBtn" title="Sauvegarde">S</button>
+<!-- Boutons flottants -->
+<div class="floating-buttons">
+    <button id="saveFloatingBtn" title="Sauvegarde">💾</button>
+    <button id="achievementsFloatingBtn" title="Succès">🏆</button>
+</div>
 <div id="saveOverlay" class="overlay" style="display: none;">
     <div class="overlay-content">
         <button class="close-btn" id="closeOverlayBtn">&times;</button>
@@ -25,6 +28,19 @@
         <div class="save-info" id="saveInfo"></div>
     </div>
 </div>
+<div id="achievementsOverlay" class="overlay" style="display: none;">
+    <div class="overlay-content">
+        <button class="close-btn" id="closeAchievementsBtn">&times;</button>
+        <h3>🏆 Succès</h3>
+        <div>Points de succès : <span id="achievementPointsDisplay">0</span></div>
+        <div class="achievements-list" id="achievementsList"></div>
+        <div class="achievement-shop" id="achievementShop">
+            <h4>Boutique (à venir)</h4>
+            <p>Les points de succès pourront être dépensés ici.</p>
+        </div>
+    </div>
+</div>
+<!-- Fin boutons flottants -->
 
 <div id="game-container">
     <!-- Ressources (toujours visibles) -->
@@ -44,10 +60,13 @@
         <div class="tab-panel" id="tab-titanite"></div>
     </div>
 </div>
-
+<script src="achievements.js"></script>
 <script src="game-state.js"></script>
 <script src="upgrades.js"></script>
 <script src="ui.js"></script>
 <script src="main.js"></script>
+
+<div id="toast-container"></div>
+
 </body>
 </html>

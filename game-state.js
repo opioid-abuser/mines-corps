@@ -28,8 +28,8 @@ const BASE_COST_DEUTERIUM = { crystal: 100, metal: 50 };
 const BASE_COST_TITANITE = { crystal: 500, metal: 250, deuterium: 100 };
 const COST_GROWTH = 1.15;
 const COST_GROWTH_DEUTERIUM = 1.65
-const DEUTERIUM_PER_MINE = 0.2;
-const TITANITE_PER_MINE = 0.1;
+const DEUTERIUM_PER_MINE = 0.1;
+const TITANITE_PER_MINE = 0.05;
 
 // Productions calculées
 let crystalProduction = new Decimal(0);
@@ -234,7 +234,7 @@ function processAutomations(timestamp) {
         // Vérifier les conditions de déblocage spécifiques (ex: deuteriumUnlocked)
         if (auto.requires === 'deuteriumUnlocked' && !deuteriumUnlocked) continue;
         if (auto.requires === 'titaniteUnlocked' && !titaniteUnlocked) continue;
-        if (timestamp - auto.lastTick < auto.interval) continue;
+        if (timestamp - auto.lastTick < automationInterval) continue;
         auto.lastTick = timestamp;
 
         if (auto.type === 'mine') {
@@ -304,7 +304,10 @@ function getMaxDeuteriumLevel() {
 
 function getMaxDeuterium() {
     const effectiveLevel = Math.min(deuteriumStorageLevel, getMaxDeuteriumLevel());
-    return Decimal.floor(Decimal.pow(1.5, effectiveLevel - 1).times(40));
+    let cap = Decimal.floor(Decimal.pow(1.5, effectiveLevel - 1).times(40));
+    // bonus succès
+    cap = cap.times(1 + achievementBonuses.deuteriumStorage);
+    return cap;
 }
 
 function getStorageUpgradeCost() {
@@ -355,7 +358,7 @@ function getMaxEnergy() {
     let cap = new Decimal(100).times(powerPlantLevel);
     const storageBonus = getEnergyUpgradeEffect('storage') || 0;
     const titanStorage = getTitaniteUpgradeEffect('energyStorageTitan') || 0;
-    cap = cap.times(1 + storageBonus + titanStorage);
+    cap = cap.times(1 + storageBonus + titanStorage + achievementBonuses.energyStorage);
     return cap;
 }
 
@@ -413,6 +416,13 @@ function recalcProduction() {
         titaniteProduction = titaniteProduction.times(1 + amp);
     } else {
         titaniteProduction = new Decimal(0);
+    }
+    // application des succès
+    crystalProduction = crystalProduction.times(1 + achievementBonuses.crystalProd);
+    metalProduction = metalProduction.times(1 + achievementBonuses.metalProd);
+    deuteriumProduction = deuteriumProduction.times(1 + achievementBonuses.deuteriumProd);
+    if (titaniteUnlocked) {
+        titaniteProduction = titaniteProduction.times(1 + achievementBonuses.titaniteProd);
     }
 
     // Amplification énergétique
@@ -489,6 +499,7 @@ function getSaveData() {
         energyUpgrades: energyUpgradesData.map(eu => ({ id: eu.id, level: eu.level })),
         titaniteUpgrades: titaniteUpgradesData.map(tu => ({ id: tu.id, level: tu.level })),
         automations: automations.map(a => ({ id: a.id, unlocked: a.unlocked, active: a.active })),
+        achievements: getAchievementsSaveData(),
         timestamp: Date.now()
     };
 }
@@ -537,6 +548,7 @@ function loadSaveData(data) {
                 if (a) { a.unlocked = saved.unlocked || false; a.active = saved.active || false; }
             });
         }
+        if (data.achievements) loadAchievementsData(data.achievements);
         return true;
     } catch (e) {
         console.error(e);
@@ -571,7 +583,8 @@ function resetGame() {
     upgradesData.forEach(up => { up.level = 0; up.deuteriumBoostLevel = 0; });
     energyUpgradesData.forEach(eu => eu.level = 0);
     titaniteUpgradesData.forEach(tu => tu.level = 0);
-    recalcProduction();
     localStorage.removeItem('minesHexSave');
     automations.forEach(a => { a.unlocked = false; a.active = false; a.lastTick = 0; });
+    resetAchievements();
+    recalcProduction();
 }

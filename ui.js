@@ -566,6 +566,7 @@ function updateUI() {
     }
 
     updateSaveInfo();
+    updateAchievementsOverlay();
 }
 
 function updateSaveInfo() {
@@ -577,6 +578,41 @@ function updateSaveInfo() {
             info.textContent = 'Aucune sauvegarde récente.';
         }
     }
+}
+
+function updateAchievementsOverlay() {
+    const list = document.getElementById('achievementsList');
+    list.innerHTML = achievements.map(a => `
+        <div class="achievement-item ${a.unlocked ? '' : 'locked'}">
+            <span>${a.unlocked ? '✅' : '🔒'} <span class="ach-name">${a.name}</span> - ${a.desc}</span>
+        </div>
+    `).join('');
+    document.getElementById('achievementPointsDisplay').textContent = achievementPoints;
+}
+
+function showAchievementToast(achievement) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    // Limite à 5 toasts : supprimer le plus ancien si nécessaire
+    const toasts = container.querySelectorAll('.toast');
+    if (toasts.length >= 5) {
+        toasts[0].remove(); // le plus ancien (en bas du flex column-reverse, le premier élément DOM est le plus ancien)
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+        <span>🏆 <strong>${achievement.name}</strong><br><small>${achievement.desc}</small></span>
+        <button class="toast-close">&times;</button>
+    `;
+
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => {
+        toast.remove();
+    });
+
+    container.appendChild(toast);
 }
 
 // Événements globaux (sauvegarde)
@@ -636,5 +672,20 @@ function initGlobalEvents() {
             updateUI();
             updateSaveInfo();
         }
+    });
+    // Bouton succès
+    const achFloatingBtn = document.getElementById('achievementsFloatingBtn');
+    const achOverlay = document.getElementById('achievementsOverlay');
+    const closeAchBtn = document.getElementById('closeAchievementsBtn');
+    const achBtn = document.getElementById('achievementsFloatingBtn');
+    achBtn.classList.remove('rgb-flash');
+    clearTimeout(achBtn._flashTimeout);
+    achFloatingBtn.addEventListener('click', () => { achOverlay.style.display = 'flex'; updateAchievementsOverlay(); });
+    closeAchBtn.addEventListener('click', () => achOverlay.style.display = 'none');
+    achFloatingBtn.addEventListener('click', () => {
+        achOverlay.style.display = 'flex';
+        updateAchievementsOverlay();
+        achBtn.classList.remove('rgb-flash');
+        clearTimeout(achBtn._flashTimeout);
     });
 }
