@@ -20,7 +20,9 @@ function initUI() {
     buildTabTitanite();
     setupTabs();
     initGlobalEvents();
+    document.getElementById('game-footer').innerHTML = `<a href="${GITHUB_PAGE_URL}">github</a> | v. ${GAME_VERSION}`;
 }
+
 
 // Barre des ressources (toujours visible)
 function buildResourcesBar() {
@@ -524,9 +526,8 @@ function updateUI() {
             const boostCost = new Decimal(up.deuteriumBoostCost).times(Decimal.pow(2, up.deuteriumBoostLevel)).times(1 - reduction);
             const canBoost = deuteriumUnlocked && resources.deuterium.gte(boostCost);
 
-            let lvlText;
-            if (up.level >= maxLvl) lvlText = 'MAX';
-            else lvlText = `Niv. ${up.level}/${maxLvl}`;
+            let lvlText = `Niv. ${up.level}/${maxLvl}`;
+
             if (deuteriumUnlocked) lvlText += ` (Boost ${up.deuteriumBoostLevel})`;
 
             row.querySelector('.upgrade-name-line').textContent = up.name;
@@ -538,7 +539,7 @@ function updateUI() {
             const buyBtn = row.querySelector('.buy-classic');
             if (buyBtn) {
                 buyBtn.disabled = !canBuy;
-                buyBtn.textContent = up.level >= maxLvl ? 'OK' : 'Acheter';
+                buyBtn.textContent = up.level >= maxLvl ? 'MAX' : 'Acheter';
             }
             const boostBtn = row.querySelector('.boost-deuterium');
             if (boostBtn) {

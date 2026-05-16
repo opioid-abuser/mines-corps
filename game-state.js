@@ -1,3 +1,6 @@
+/*TODO change version*/
+const GAME_VERSION = "a9";
+const GITHUB_PAGE_URL = "https://github.com/opioid-abuser/mines-corps";
 // Ressources
 const resources = {
     crystal: new Decimal(10),
@@ -421,7 +424,9 @@ function recalcProduction() {
     // application des succès
     crystalProduction = crystalProduction.times(1 + achievementBonuses.crystalProd);
     metalProduction = metalProduction.times(1 + achievementBonuses.metalProd);
-    deuteriumProduction = deuteriumProduction.times(1 + achievementBonuses.deuteriumProd);
+    if (deuteriumUnlocked) {
+        deuteriumProduction = deuteriumProduction.times(1 + achievementBonuses.deuteriumProd);
+    }
     if (titaniteUnlocked) {
         titaniteProduction = titaniteProduction.times(1 + achievementBonuses.titaniteProd);
     }

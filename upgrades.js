@@ -46,30 +46,6 @@ const upgradesData = [
         }
     },
     {
-        id: 'synergy',
-        name: 'Synergie minière',
-        baseDescription: 'Bonus de production selon le nombre total de mines.',
-        baseCostCrystal: 200,
-        baseCostMetal: 100,
-        costMult: 1.8,
-        level: 0,
-        maxLevelBase: 10,
-        deuteriumBoostLevel: 0,
-        deuteriumBoostCost: 20,
-        getEffect(lvl) {
-            const base = 0.02 * lvl;
-            const bonus = 1 + this.deuteriumBoostLevel * 0.1;
-            return base * bonus;
-        },
-        get maxLevel() { return this.maxLevelBase + this.deuteriumBoostLevel * 3; },
-        getDescription() {
-            const perMine = (this.getEffect(this.level) * 100).toFixed(1);
-            const total = getAllMinesCount();
-            const totalBonus = (this.getEffect(this.level) * total * 100).toFixed(1);
-            return `+${perMine}% par mine. Bonus total : +${totalBonus}% production.`;
-        }
-    },
-    {
         id: 'passiveCrystal',
         name: 'Prospection cristal',
         baseDescription: 'Production passive de cristal.',
@@ -89,31 +65,37 @@ const upgradesData = [
             const current = this.getEffect(this.level).toFixed(1);
             return `+${current} cristal/sec (passif).`;
         }
+    },
+    {
+        id: 'synergy',
+        name: 'Synergie minière',
+        baseDescription: 'Bonus de production selon le nombre total de mines.',
+        baseCostCrystal: 2000,
+        baseCostMetal: 1000,
+        costMult: 2.1,
+        level: 0,
+        maxLevelBase: 8,
+        deuteriumBoostLevel: 0,
+        deuteriumBoostCost: 4100,
+        getEffect(lvl) {
+            const base = 0.02 * lvl;
+            const bonus = 1 + this.deuteriumBoostLevel * 0.1;
+            return base * bonus;
+        },
+        get maxLevel() {
+            return this.maxLevelBase + this.deuteriumBoostLevel * 2;
+        },
+        getDescription() {
+            const perMine = (this.getEffect(this.level) * 100).toFixed(1);
+            const total = getAllMinesCount();
+            const totalBonus = (this.getEffect(this.level) * total * 100).toFixed(1);
+            return `+${perMine}% par mine. Bonus total : +${totalBonus}% production.`;
+        }
     }
 ];
 
 // Améliorations énergétiques (coût en énergie)
 const energyUpgradesData = [
-    {
-        id: 'overcharge',
-        name: 'Surcharge',
-        baseDescription: 'Production d\'énergie +20% par niveau.',
-        baseCost: 15,
-        costMult: 2.0,
-        level: 0,
-        maxLevel: 20,
-        getEffect() { return this.level * 0.2; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% production d\'énergie.`; },
-        buy() {
-            if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
-            const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
-            if (resources.energy.lt(cost)) return false;
-            resources.energy = resources.energy.sub(cost);
-            this.level++;
-            recalcProduction();
-            return true;
-        }
-    },
     {
         id: 'amplification',
         name: 'Amplification',
@@ -150,6 +132,30 @@ const energyUpgradesData = [
             if (resources.energy.lt(cost)) return false;
             resources.energy = resources.energy.sub(cost);
             this.level++;
+            return true;
+        }
+    },
+    {
+        id: 'overcharge',
+        name: 'Surcharge',
+        baseDescription: 'Production d\'énergie +20% par niveau.',
+        baseCost: 15,
+        costMult: 2.0,
+        level: 0,
+        maxLevel: 20,
+        getEffect() {
+            return this.level * 0.2;
+        },
+        getDescription() {
+            return `+${(this.getEffect() * 100).toFixed(0)}% production d\'énergie.`;
+        },
+        buy() {
+            if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
+            const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
+            if (resources.energy.lt(cost)) return false;
+            resources.energy = resources.energy.sub(cost);
+            this.level++;
+            recalcProduction();
             return true;
         }
     },
