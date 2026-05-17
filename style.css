@@ -147,7 +147,16 @@ body {
     gap: 0.2rem;
 }
 .mine-label { font-weight: 600; font-size: 0.95rem; }
-.mine-count { font-size: 0.85rem; opacity: 0.8; }
+
+.mine-count {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.mine-count-bonus {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
 .mine-action {
     display: flex;
     flex-direction: column;
@@ -447,6 +456,10 @@ body {
 #costTableContent h4 {
     margin: 1rem 0 0.5rem;
     color: var(--accent-crystal);
+}
+
+.nanite-building.active {
+    border-left: 4px solid #f1c40f;
 }
 
 #game-footer {

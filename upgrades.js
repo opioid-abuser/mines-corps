@@ -289,6 +289,78 @@ const titaniteUpgradesData = [
     }*/
 ];
 
+const naniteBuildingsData = [
+    {
+        id: 'converter',
+        name: 'Convertisseur crystallique',
+        desc: '50% de la production de cristal est ajoutée à celle de métal.',
+        requiredPlantLevel: 1,
+        cost: {crystal: 250000, metal: 150000, deuterium: 50000, titanite: 2500},
+        isBought() {
+            return naniteBuilding1;
+        },
+        buy() {
+            if (this.isBought()) return false;
+            const c = this.cost;
+            if (resources.crystal.lt(c.crystal) || resources.metal.lt(c.metal) ||
+                resources.deuterium.lt(c.deuterium) || resources.titanite.lt(c.titanite)) return false;
+            resources.crystal = resources.crystal.sub(c.crystal);
+            resources.metal = resources.metal.sub(c.metal);
+            resources.deuterium = resources.deuterium.sub(c.deuterium);
+            resources.titanite = resources.titanite.sub(c.titanite);
+            naniteBuilding1 = true;
+            recalcProduction();
+            return true;
+        }
+    },
+    {
+        id: 'drones',
+        name: 'Usine de nano-drones',
+        desc: 'Bonus passif égal à 80% du nombre de mines.',
+        requiredPlantLevel: 2,
+        cost: {crystal: 1000000, metal: 600000, deuterium: 200000, titanite: 10000},
+        isBought() {
+            return naniteBuilding2;
+        },
+        buy() {
+            if (this.isBought()) return false;
+            const c = this.cost;
+            if (resources.crystal.lt(c.crystal) || resources.metal.lt(c.metal) ||
+                resources.deuterium.lt(c.deuterium) || resources.titanite.lt(c.titanite)) return false;
+            resources.crystal = resources.crystal.sub(c.crystal);
+            resources.metal = resources.metal.sub(c.metal);
+            resources.deuterium = resources.deuterium.sub(c.deuterium);
+            resources.titanite = resources.titanite.sub(c.titanite);
+            naniteBuilding2 = true;
+            recalcProduction();
+            return true;
+        }
+    },
+    {
+        id: 'spaceport',
+        name: 'Spatio-port',
+        desc: 'Débloque l’onglet des vaisseaux spatiaux.', // TODO
+        requiredPlantLevel: 3,
+        cost: {crystal: 4000000, metal: 2500000, deuterium: 750000, titanite: 40000},
+        isBought() {
+            return naniteBuilding3;
+        },
+        buy() {
+            if (this.isBought()) return false;
+            const c = this.cost;
+            if (resources.crystal.lt(c.crystal) || resources.metal.lt(c.metal) ||
+                resources.deuterium.lt(c.deuterium) || resources.titanite.lt(c.titanite)) return false;
+            resources.crystal = resources.crystal.sub(c.crystal);
+            resources.metal = resources.metal.sub(c.metal);
+            resources.deuterium = resources.deuterium.sub(c.deuterium);
+            resources.titanite = resources.titanite.sub(c.titanite);
+            naniteBuilding3 = true;
+            spaceTabUnlocked = true;
+            return true;
+        }
+    }
+];
+
 function getUpgradeCosts(up) {
     return {
         crystal: new Decimal(up.baseCostCrystal).times(Decimal.pow(up.costMult, up.level)),

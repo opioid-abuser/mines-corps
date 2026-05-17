@@ -1,5 +1,5 @@
 /*TODO change version*/
-const GAME_VERSION = "a9";
+const GAME_VERSION = "a10";
 const GITHUB_PAGE_URL = "https://github.com/opioid-abuser/mines-corps";
 // Ressources
 const resources = {
@@ -23,6 +23,12 @@ let deuteriumUnlocked = false;
 let deuteriumStorageLevel = 1;
 let powerPlantLevel = 0;
 let titaniteUnlocked = false;
+let naniteUnlocked = false;
+let nanitePlantLevel = 0;
+let naniteBuilding1 = false;
+let naniteBuilding2 = false;
+let naniteBuilding3 = false;
+let spaceTabUnlocked = false;
 
 // Coûts de base
 const BASE_COST_CRYSTAL = 10;
@@ -34,6 +40,11 @@ const COST_GROWTH_DEUTERIUM = 1.65
 const COST_GROWTH_TITANITE = 1.66
 const DEUTERIUM_PER_MINE = 0.1;
 const TITANITE_PER_MINE = 0.05;
+const NANITE_PLANT_COSTS = [
+    {crystal: 1e10, metal: 1e9, deuterium: 100000, titanite: 5000},   // Niveau 1
+    {crystal: 1e12, metal: 3e9, deuterium: 400000, titanite: 20000}, // Niveau 2
+    {crystal: 1e14, metal: 11e9, deuterium: 1500000, titanite: 80000} // Niveau 3
+];
 
 // Productions calculées
 let crystalProduction = new Decimal(0);
@@ -44,10 +55,6 @@ let energyProduction = new Decimal(0);
 let titaniteProduction = new Decimal(0);
 
 // --- Fonctions globales ---
-function totalMinesOfType(type) {
-    return minesCount[type];
-}
-
 function getAllMinesCount() {
     return Object.values(minesCount).reduce((a, b) => a + b, 0);
 }
@@ -94,6 +101,12 @@ function checkDeuteriumUnlock() {
 function checkTitaniteUnlock() {
     if (!titaniteUnlocked && powerPlantLevel >= 10) {
         titaniteUnlocked = true;
+    }
+}
+
+function checkNaniteUnlock() {
+    if (!naniteUnlocked && minesCount.titanite >= 30) {
+        naniteUnlocked = true;
     }
 }
 
@@ -282,6 +295,7 @@ function processAutomations(timestamp) {
             if (success) {
                 recalcProduction();
                 checkDeuteriumUnlock();
+                checkNaniteUnlock();
             }
         } else if (auto.type === 'upgrade') {
             const up = upgradesData.find(u => u.id === auto.upgradeId);
@@ -401,27 +415,80 @@ function downgradePowerPlant() {
     return true;
 }
 
+
+// --- Fonctions d'accès aux effets d'upgrades ---
+function getUpgradeEffect(id) {
+    const up = upgradesData.find(u => u.id === id);
+    if (up) return up.getEffect(up.level);
+    return 0;
+}
+
+function getEnergyUpgradeEffect(id) {
+    const up = energyUpgradesData.find(u => u.id === id);
+    if (up) return up.getEffect();
+    return 0;
+}
+
+function getTitaniteUpgradeEffect(id) {
+    const up = titaniteUpgradesData.find(u => u.id === id);
+    if (up) return up.getEffect();
+    return 0;
+}
+
+function buyNanitePlant() {
+    if (nanitePlantLevel >= 3) return false;
+    const cost = NANITE_PLANT_COSTS[nanitePlantLevel];
+    if (resources.crystal.lt(cost.crystal) || resources.metal.lt(cost.metal) ||
+        resources.deuterium.lt(cost.deuterium) || resources.titanite.lt(cost.titanite)) return false;
+    resources.crystal = resources.crystal.sub(cost.crystal);
+    resources.metal = resources.metal.sub(cost.metal);
+    resources.deuterium = resources.deuterium.sub(cost.deuterium);
+    resources.titanite = resources.titanite.sub(cost.titanite);
+    nanitePlantLevel++;
+    recalcProduction();
+    return true;
+}
+
+
 // --- Production ---
 function recalcProduction() {
     const prodBoost = getUpgradeEffect('prodBoost');
     const synergy = getUpgradeEffect('synergy');
     const passiveCrystal = getUpgradeEffect('passiveCrystal');
-    const totalMines = getAllMinesCount();
-    const synergyBonus = 1 + synergy * totalMines;
+    const synergyBonus = 1 + synergy * getAllMinesCount();
     const perMineBase = 1 + prodBoost;
     const perMetalMineBase = perMineBase * 1.5;
 
-    crystalProduction = new Decimal(minesCount.crystal).add(passiveCrystal).times(perMineBase).times(synergyBonus);
-    metalProduction = new Decimal(minesCount.metal).times(perMetalMineBase).times(synergyBonus);
-    deuteriumProduction = new Decimal(minesCount.deuterium).times(DEUTERIUM_PER_MINE + prodBoost).times(synergyBonus);
-    if (titaniteUnlocked) {
-        titaniteProduction = new Decimal(minesCount.titanite).times(TITANITE_PER_MINE + prodBoost).times(synergyBonus);
-        const amp = getTitaniteUpgradeEffect('titaniteAmp') || 0;
-        titaniteProduction = titaniteProduction.times(1 + amp);
+    if (naniteBuilding2) {
+        crystalProduction = new Decimal(Math.floor(minesCount.crystal * 1.8)).add(passiveCrystal).times(perMineBase).times(synergyBonus);
+        metalProduction = new Decimal(Math.floor(minesCount.metal * 1.8)).times(perMetalMineBase).times(synergyBonus);
+        deuteriumProduction = new Decimal(Math.floor(minesCount.deuterium * 1.8)).times(DEUTERIUM_PER_MINE + prodBoost).times(synergyBonus);
+        if (titaniteUnlocked) {
+            titaniteProduction = new Decimal(minesCount.titanite).times(TITANITE_PER_MINE + prodBoost).times(synergyBonus);
+            const amp = getTitaniteUpgradeEffect('titaniteAmp') || 0;
+            titaniteProduction = titaniteProduction.times(1 + amp);
+        } else {
+            titaniteProduction = new Decimal(0);
+        }
     } else {
-        titaniteProduction = new Decimal(0);
+        crystalProduction = new Decimal(minesCount.crystal).add(passiveCrystal).times(perMineBase).times(synergyBonus);
+        metalProduction = new Decimal(minesCount.metal).times(perMetalMineBase).times(synergyBonus);
+        deuteriumProduction = new Decimal(minesCount.deuterium).times(DEUTERIUM_PER_MINE + prodBoost).times(synergyBonus);
+        if (titaniteUnlocked) {
+            titaniteProduction = new Decimal(minesCount.titanite).times(TITANITE_PER_MINE + prodBoost).times(synergyBonus);
+            const amp = getTitaniteUpgradeEffect('titaniteAmp') || 0;
+            titaniteProduction = titaniteProduction.times(1 + amp);
+        } else {
+            titaniteProduction = new Decimal(0);
+        }
     }
-    // application des succès
+
+    // Bâtiment 1
+    if (naniteBuilding1) {
+        metalProduction = metalProduction.add(crystalProduction.times(0.5));
+    }
+
+    // Application des succès
     crystalProduction = crystalProduction.times(1 + achievementBonuses.crystalProd);
     metalProduction = metalProduction.times(1 + achievementBonuses.metalProd);
     if (deuteriumUnlocked) {
@@ -444,25 +511,6 @@ function recalcProduction() {
         deuteriumConsumption = new Decimal(0);
         energyProduction = new Decimal(0);
     }
-}
-
-// --- Fonctions d'accès aux effets d'upgrades ---
-function getUpgradeEffect(id) {
-    const up = upgradesData.find(u => u.id === id);
-    if (up) return up.getEffect(up.level);
-    return 0;
-}
-
-function getEnergyUpgradeEffect(id) {
-    const up = energyUpgradesData.find(u => u.id === id);
-    if (up) return up.getEffect();
-    return 0;
-}
-
-function getTitaniteUpgradeEffect(id) {
-    const up = titaniteUpgradesData.find(u => u.id === id);
-    if (up) return up.getEffect();
-    return 0;
 }
 
 // --- Formatage des nombres ---
@@ -506,6 +554,12 @@ function getSaveData() {
         titaniteUpgrades: titaniteUpgradesData.map(tu => ({ id: tu.id, level: tu.level })),
         automations: automations.map(a => ({ id: a.id, unlocked: a.unlocked, active: a.active })),
         achievements: getAchievementsSaveData(),
+        naniteUnlocked,
+        nanitePlantLevel,
+        naniteBuilding1,
+        naniteBuilding2,
+        naniteBuilding3,
+        spaceTabUnlocked,
         timestamp: Date.now()
     };
 }
@@ -555,6 +609,12 @@ function loadSaveData(data) {
             });
         }
         if (data.achievements) loadAchievementsData(data.achievements);
+        naniteUnlocked = data.naniteUnlocked || false;
+        nanitePlantLevel = data.nanitePlantLevel || 0;
+        naniteBuilding1 = data.naniteBuilding1 || false;
+        naniteBuilding2 = data.naniteBuilding2 || false;
+        naniteBuilding3 = data.naniteBuilding3 || false;
+        spaceTabUnlocked = data.spaceTabUnlocked || false;
         return true;
     } catch (e) {
         console.error(e);
@@ -591,6 +651,12 @@ function resetGame() {
     titaniteUpgradesData.forEach(tu => tu.level = 0);
     localStorage.removeItem('minesHexSave');
     automations.forEach(a => { a.unlocked = false; a.active = false; a.lastTick = 0; });
+    naniteUnlocked = false;
+    nanitePlantLevel = 0;
+    naniteBuilding1 = false;
+    naniteBuilding2 = false;
+    naniteBuilding3 = false;
+    spaceTabUnlocked = false;
     resetAchievements();
     recalcProduction();
 }

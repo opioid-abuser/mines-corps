@@ -67,6 +67,7 @@ function buildTabBasic() {
                     <div class="mine-info">
                         <span class="mine-label crystal-color">💎 Cristal</span>
                         <span class="mine-count" id="mineCountCrystal">0</span>
+                        <span class="mine-count-bonus" id="mineCountBonusCrystal"></span>
                     </div>
                     <div class="mine-action">
                         <button class="mine-buy-btn" id="buyCrystalBtn">Acheter</button>
@@ -77,6 +78,7 @@ function buildTabBasic() {
                     <div class="mine-info">
                         <span class="mine-label metal-color">⚙️ Métal</span>
                         <span class="mine-count" id="mineCountMetal">0</span>
+                        <span class="mine-count-bonus" id="mineCountBonusMetal"></span>
                     </div>
                     <div class="mine-action">
                         <button class="mine-buy-btn" id="buyMetalBtn">Acheter</button>
@@ -87,6 +89,7 @@ function buildTabBasic() {
                     <div class="mine-info">
                         <span class="mine-label deuterium-color">💧 Deutérium</span>
                         <span class="mine-count" id="mineCountDeuterium">0</span>
+                        <span class="mine-count-bonus" id="mineCountBonusDeuterium"></span>
                     </div>
                     <div class="mine-action">
                         <button class="mine-buy-btn" id="buyDeuteriumBtn">Acheter</button>
@@ -292,6 +295,9 @@ function setupTabs() {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             const target = document.getElementById(btn.dataset.tab);
             if (target) target.classList.add('active');
+            if (btn.dataset.tab === 'tab-nanite' && !document.getElementById('nanitePlantSection')) {
+                buildTabNanite();
+            }
         });
     });
 }
@@ -337,6 +343,7 @@ function buyTitaniteMine() {
     resources.deuterium = resources.deuterium.sub(cost.deuterium);
     minesCount.titanite++;
     recalcProduction();
+    checkNaniteUnlock();
     updateUI();
 }
 
@@ -430,15 +437,108 @@ function showCostTableOverlay() {
     document.getElementById('costTableOverlay').style.display = 'flex';
 }
 
+// Onglet 4 : Nanite
+function buildTabNanite() {
+    const tab = document.getElementById('tab-nanite');
+    if (!tab) return;
+    tab.innerHTML = `
+        <div class="panel-section">
+            <div class="section-title">Usine de Nanite (niveau ${nanitePlantLevel}/3)</div>
+            <div class="mine-grid" id="nanitePlantGrid"></div>
+        </div>
+        <div class="panel-section">
+            <div class="section-title">Bâtiments</div>
+            <div class="upgrades-grid" id="naniteBuildingsGrid"></div>
+        </div>
+    `;
+    updateNanitePlantUI();
+    updateNaniteBuildingsUI();
+}
+
+function updateNanitePlantUI() {
+    const grid = document.getElementById('nanitePlantGrid');
+    if (!grid) return;
+    let html = '';
+    for (let i = 0; i < 3; i++) {
+        const level = i + 1;
+        const cost = NANITE_PLANT_COSTS[i];
+        const owned = nanitePlantLevel >= level;
+        const canBuy = (nanitePlantLevel === i);
+        html += `<div class="mine-item">
+            <div class="mine-info">
+                <span class="mine-label">Niveau ${level}</span>
+                <span class="mine-cost-display">${formatCost('crystal', cost.crystal)} ${formatCost('metal', cost.metal)} ${formatCost('deuterium', cost.deuterium)} ${formatCost('titanite', cost.titanite)}</span>
+            </div>
+            <div class="mine-action">
+                <button class="mine-buy-btn" data-nanite="${i}" ${canBuy && !owned ? '' : 'disabled'}>
+                    ${owned ? '✔️' : 'Acheter'}
+                </button>
+            </div>
+        </div>`;
+    }
+    grid.innerHTML = html;
+    // Événements
+    grid.querySelectorAll('.mine-buy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (buyNanitePlant()) {
+                buildTabNanite();   // reconstruit l'onglet pour refléter le nouveau niveau
+                updateUI();
+            }
+        });
+    });
+}
+
+function updateNaniteBuildingsUI() {
+    const grid = document.getElementById('naniteBuildingsGrid');
+    if (!grid) return;
+    let html = '';
+    naniteBuildingsData.forEach(b => {
+        const canAfford = resources.crystal.gte(b.cost.crystal) &&
+            resources.metal.gte(b.cost.metal) &&
+            resources.deuterium.gte(b.cost.deuterium) &&
+            resources.titanite.gte(b.cost.titanite);
+        const unlocked = nanitePlantLevel >= b.requiredPlantLevel;
+        const bought = b.isBought();
+        html += `<div class="upgrade-row">
+            <div class="upgrade-info">
+                <div class="upgrade-name-line">${b.name}</div>
+                <div class="upgrade-desc-line">${b.desc}</div>
+            </div>
+            <div class="upgrade-cost">
+                <span>${formatCost('crystal', b.cost.crystal)} ${formatCost('metal', b.cost.metal)} ${formatCost('deuterium', b.cost.deuterium)} ${formatCost('titanite', b.cost.titanite)}</span>
+            </div>
+            <div class="upgrade-actions">
+                <button class="upgrade-buy" data-building="${b.id}" ${(!unlocked || bought || !canAfford) ? 'disabled' : ''}>
+                    ${bought ? '✔️' : (unlocked ? 'Acheter' : 'Verrouillé')}
+                </button>
+            </div>
+        </div>`;
+    });
+    grid.innerHTML = html;
+    // Événements
+    grid.querySelectorAll('.upgrade-buy').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const building = naniteBuildingsData.find(b => b.id === btn.dataset.building);
+            if (building && building.buy()) {
+                buildTabNanite();
+                updateUI();
+            }
+        });
+    });
+}
+
 function updateTabsVisibility() {
     const tabEnergy = document.getElementById('tab-btn-energy') || document.querySelector('.tab-btn[data-tab="tab-energy"]');
     const tabTitanite = document.getElementById('tab-btn-titanite') || document.querySelector('.tab-btn[data-tab="tab-titanite"]');
-
+    const tabNanite = document.getElementById('tab-btn-nanite') || document.querySelector('.tab-btn[data-tab="tab-nanite"]');
     if (tabEnergy) {
         tabEnergy.style.display = deuteriumUnlocked ? '' : 'none';
     }
     if (tabTitanite) {
         tabTitanite.style.display = titaniteUnlocked ? '' : 'none';
+    }
+    if (tabNanite) {
+        tabNanite.style.display = naniteUnlocked ? '' : 'none';
     }
 
     // Si l'onglet actif est caché, basculer sur l'onglet de base
@@ -513,6 +613,13 @@ function updateUI() {
         deutMineRow.style.display = 'none';
     }
 
+    if (naniteBuilding2) {
+        document.getElementById('mineCountBonusCrystal').textContent = '(+ bonus ' + Math.floor(minesCount.crystal * 0.8) + ')';
+        document.getElementById('mineCountBonusMetal').textContent = '(+ bonus ' + Math.floor(minesCount.metal * 0.8) + ')';
+        if (deuteriumUnlocked) {
+            document.getElementById('mineCountBonusDeuterium').textContent = '(+ bonus ' + Math.floor(minesCount.deuterium * 0.8) + ')';
+        }
+    }
     // Améliorations classiques
     const classicContainer = document.getElementById('classicUpgrades');
     if (classicContainer) {
@@ -676,6 +783,15 @@ function updateUI() {
         titaniteMineSection.style.display = 'none';
         titaniteUpSection.style.display = 'none';
         autoSection.style.display = 'none';
+    }
+
+    // Mise à jour du bonus des drones (texte dynamique)
+    if (naniteBuilding2) {
+        const droneBonus = Math.floor((minesCount.crystal + minesCount.metal + minesCount.deuterium + minesCount.titanite) * 0.8);
+        const droneTextEl = document.getElementById('droneBonusText');
+        if (droneTextEl) {
+            droneTextEl.textContent = `Bonus +${droneBonus} à toutes les productions`;
+        }
     }
 
     updateSaveInfo();
