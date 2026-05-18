@@ -1,5 +1,5 @@
 /*TODO change version*/
-const GAME_VERSION = "a10";
+const GAME_VERSION = "a11";
 const GITHUB_PAGE_URL = "https://github.com/opioid-abuser/mines-corps";
 // Ressources
 const resources = {

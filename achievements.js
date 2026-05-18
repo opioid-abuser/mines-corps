@@ -72,13 +72,92 @@ const achievements = [
     { id: 'deut8M', name: 'Deutérium 8M', desc: 'Produire 8 000 000 deutérium', condition: () => totalProduced.deuterium >= 8e6, reward() { achievementBonuses.deuteriumProd += 0.25; }, points: 1 },
 
     // --- Production totale titanite ---
-    { id: 'titanite14k', name: 'Titanite 14k', desc: 'Produire 14 000 titanite au total', condition: () => totalProduced.titanite >= 14000, reward() { achievementBonuses.titaniteProd += 0.1; }, points: 1 },
-    { id: 'titanite60k', name: 'Titanite 60k', desc: 'Produire 60 000 titanite', condition: () => totalProduced.titanite >= 60000, reward() { achievementBonuses.titaniteProd += 0.15; }, points: 1 },
-    { id: 'titanite600k', name: 'Titanite 600k', desc: 'Produire 600 000 titanite', condition: () => totalProduced.titanite >= 600000, reward() { achievementBonuses.titaniteProd += 0.2; }, points: 1 },
-    { id: 'titanite6M', name: 'Titanite 6M', desc: 'Produire 6 000 000 titanite', condition: () => totalProduced.titanite >= 6e6, reward() { achievementBonuses.titaniteProd += 0.25; }, points: 1 },
+    {
+        id: 'titanite14k',
+        name: 'Titanite 14k',
+        desc: 'Produire 14 000 titanite au total',
+        condition: () => totalProduced.titanite >= 14000,
+        reward() {
+            achievementBonuses.titaniteProd += 0.05;
+        },
+        points: 1
+    },
+    {
+        id: 'titanite60k',
+        name: 'Titanite 60k',
+        desc: 'Produire 60 000 titanite',
+        condition: () => totalProduced.titanite >= 60000,
+        reward() {
+            achievementBonuses.titaniteProd += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'titanite600k',
+        name: 'Titanite 600k',
+        desc: 'Produire 600 000 titanite',
+        condition: () => totalProduced.titanite >= 600000,
+        reward() {
+            achievementBonuses.titaniteProd += 0.15;
+        },
+        points: 1
+    },
+    {
+        id: 'titanite6M',
+        name: 'Titanite 6M',
+        desc: 'Produire 6 000 000 titanite',
+        condition: () => totalProduced.titanite >= 6e6,
+        reward() {
+            achievementBonuses.titaniteProd += 0.2;
+        },
+        points: 1
+    },
 
     // --- Automatisation ---
-    { id: 'allAutomations', name: 'Maître des robots', desc: 'Débloquer toutes les automatisations', condition: () => automations.every(a => a.unlocked), reward() { automationInterval = 1000; }, points: 1 }
+    {
+        id: 'allAutomations',
+        name: 'Maître des robots',
+        desc: 'Débloquer toutes les automatisations',
+        condition: () => automations.every(a => a.unlocked),
+        reward() {
+            automationInterval = 1000;
+        },
+        points: 1
+    },
+
+    // --- Nanite ---
+    {
+        id: 'achNaniteBuilding1',
+        name: 'Usine Nanite 1',
+        desc: 'Débloquer le premier niveau de l\'usine de nanite',
+        condition: () => naniteBuilding1,
+        reward() {
+            achievementBonuses.metalProd += 0.2;
+        },
+        points: 10
+    },
+    {
+        id: 'achNaniteBuilding2',
+        name: 'Usine Nanite 2',
+        desc: 'Débloquer le deuxième niveau de l\'usine de nanite',
+        condition: () => naniteBuilding2,
+        reward() {
+            achievementBonuses.crystalProd += 0.2;
+        },
+        points: 10
+    },
+    {
+        id: 'achNaniteBuilding3',
+        name: 'Usine Nanite 3',
+        desc: 'Débloquer le troisième niveau de l\'usine de nanite',
+        condition: () => naniteBuilding2,
+        reward() {
+            achievementBonuses.deuteriumStorage += 20;
+        },
+        points: 10
+    },
+
+
 ];
 
 // Bonus passifs cumulés

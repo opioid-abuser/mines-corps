@@ -70,20 +70,20 @@ const upgradesData = [
         id: 'synergy',
         name: 'Synergie minière',
         baseDescription: 'Bonus de production selon le nombre total de mines.',
-        baseCostCrystal: 2000,
-        baseCostMetal: 1000,
-        costMult: 2.1,
+        baseCostCrystal: 20000,
+        baseCostMetal: 10000,
+        costMult: 2.2,
         level: 0,
-        maxLevelBase: 8,
+        maxLevelBase: 4,
         deuteriumBoostLevel: 0,
-        deuteriumBoostCost: 4100,
+        deuteriumBoostCost: 6100,
         getEffect(lvl) {
-            const base = 0.02 * lvl;
+            const base = 0.01 * lvl;
             const bonus = 1 + this.deuteriumBoostLevel * 0.1;
             return base * bonus;
         },
         get maxLevel() {
-            return this.maxLevelBase + this.deuteriumBoostLevel * 2;
+            return this.maxLevelBase + this.deuteriumBoostLevel;
         },
         getDescription() {
             const perMine = (this.getEffect(this.level) * 100).toFixed(1);

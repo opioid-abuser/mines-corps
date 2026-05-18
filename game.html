@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Mines Corps</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/break_infinity.js@2.0.0/dist/break_infinity.min.js"></script>
 </head>
 <body>
@@ -14,7 +14,7 @@
     <button id="achievementsFloatingBtn" title="Succès">🏆</button>
     <button id="costTableFloatingBtn" title="gear">⚙️</button>
 </div>
-<div id="saveOverlay" class="overlay" style="display: none;">
+<div class="overlay" id="saveOverlay" style="display: none;">
     <div class="overlay-content">
         <button class="close-btn" id="closeOverlayBtn">&times;</button>
         <h3>Sauvegarde</h3>
@@ -25,11 +25,11 @@
             <button id="importBtn">Importer</button>
             <button id="resetBtn">Réinitialiser</button>
         </div>
-        <input type="file" id="importFile" accept=".json" style="display: none;">
+        <input accept=".json" id="importFile" style="display: none;" type="file">
         <div class="save-info" id="saveInfo"></div>
     </div>
 </div>
-<div id="achievementsOverlay" class="overlay" style="display: none;">
+<div class="overlay" id="achievementsOverlay" style="display: none;">
     <div class="overlay-content">
         <button class="close-btn" id="closeAchievementsBtn">&times;</button>
         <h3>🏆 Succès</h3>
@@ -41,7 +41,7 @@
         </div>
     </div>
 </div>
-<div id="costTableOverlay" class="overlay" style="display: none;">
+<div class="overlay" id="costTableOverlay" style="display: none;">
     <div class="overlay-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
         <button class="close-btn" id="closeCostTableBtn">&times;</button>
         <h3></h3>
