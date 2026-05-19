@@ -1,6 +1,10 @@
 /*TODO change version*/
-const GAME_VERSION = "a11";
+const GAME_VERSION = "a12";
 const GITHUB_PAGE_URL = "https://github.com/opioid-abuser/mines-corps";
+
+// Settings
+let numberNotation = 'standard';   // 'standard' (k, M, G, T) ou 'scientific'
+
 // Ressources
 const resources = {
     crystal: new Decimal(10),
@@ -41,9 +45,9 @@ const COST_GROWTH_TITANITE = 1.66
 const DEUTERIUM_PER_MINE = 0.1;
 const TITANITE_PER_MINE = 0.05;
 const NANITE_PLANT_COSTS = [
-    {crystal: 1e10, metal: 1e9, deuterium: 100000, titanite: 5000},   // Niveau 1
-    {crystal: 1e12, metal: 3e9, deuterium: 400000, titanite: 20000}, // Niveau 2
-    {crystal: 1e14, metal: 11e9, deuterium: 1500000, titanite: 80000} // Niveau 3
+    {crystal: 1e10, metal: 1e9, deuterium: 1e6, titanite: 1e7},   // Niveau 1
+    {crystal: 1e11, metal: 3e9, deuterium: 2e6, titanite: 3e7}, // Niveau 2
+    {crystal: 2e12, metal: 7e9, deuterium: 6e6, titanite: 7e7} // Niveau 3
 ];
 
 // Productions calculées
@@ -116,8 +120,8 @@ AUTOMATION_COST_TITANITE = new Decimal(2900000);
 const automations = [
     {
         id: 'autoCrystal',
-        name: 'Mine de cristal',
-        desc: 'Achète automatiquement des mines de cristal.',
+        name: 'Crystal mine',
+        desc: 'Automatically purchase crystal mines.',
         costEnergy: AUTOMATION_COST_ENERGY,
         costTitanite: AUTOMATION_COST_TITANITE,
         type: 'mine',
@@ -130,8 +134,8 @@ const automations = [
     },
     {
         id: 'autoMetal',
-        name: 'Mine de métal',
-        desc: 'Achète automatiquement des mines de métal.',
+        name: 'Iron mine',
+        desc: 'Automatically purchase iron mines.',
         costEnergy: AUTOMATION_COST_ENERGY,
         costTitanite: AUTOMATION_COST_TITANITE,
         type: 'mine',
@@ -142,10 +146,10 @@ const automations = [
         interval: 1000,
         requires: null
     },
-/*    {
+    {
         id: 'autoDeuterium',
-        name: 'Mine de deutérium',
-        desc: 'Achète automatiquement des mines de deutérium.',
+        name: 'Deuterium mine',
+        desc: 'Automatically purchase deuterium mines.',
         costEnergy: 100,
         costTitanite: 10,
         type: 'mine',
@@ -155,11 +159,11 @@ const automations = [
         lastTick: 0,
         interval: 1000,
         requires: 'deuteriumUnlocked'
-    },*/
+    },
     {
         id: 'autoTitanite',
-        name: 'Mine de titanite',
-        desc: 'Achète automatiquement des mines de titanite.',
+        name: 'Titanite Mine',
+        desc: 'Automatically purchase titanite mines.',
         costEnergy: AUTOMATION_COST_ENERGY,
         costTitanite: AUTOMATION_COST_TITANITE,
         type: 'mine',
@@ -172,8 +176,8 @@ const automations = [
     },
     {
         id: 'autoProdBoost',
-        name: 'Productivité',
-        desc: 'Améliore automatiquement Productivité.',
+        name: 'Productivity',
+        desc: 'Automatically purchase Productivity.',
         costEnergy: AUTOMATION_COST_ENERGY,
         costTitanite: AUTOMATION_COST_TITANITE,
         type: 'upgrade',
@@ -186,8 +190,8 @@ const automations = [
     },
     {
         id: 'autoCostReduction',
-        name: 'Forage efficace',
-        desc: 'Améliore automatiquement Forage efficace.',
+        name: 'High-efficiency drilling',
+        desc: 'Automatically purchase High-efficiency drilling.',
         costEnergy: AUTOMATION_COST_ENERGY,
         costTitanite: AUTOMATION_COST_TITANITE,
         type: 'upgrade',
@@ -199,13 +203,13 @@ const automations = [
         requires: null
     },
     {
-        id: 'autoSynergy',
-        name: 'Synergie minière',
-        desc: 'Améliore automatiquement Synergie minière.',
+        id: 'autoPassiveCrystal',
+        name: 'Prospection cristal',
+        desc: 'Automatically purchase Prospection cristal.',
         costEnergy: AUTOMATION_COST_ENERGY,
         costTitanite: AUTOMATION_COST_TITANITE,
         type: 'upgrade',
-        upgradeId: 'synergy',
+        upgradeId: 'passiveCrystal',
         unlocked: false,
         active: false,
         lastTick: 0,
@@ -213,13 +217,13 @@ const automations = [
         requires: null
     },
     {
-        id: 'autoPassiveCrystal',
-        name: 'Prospection cristal',
-        desc: 'Améliore automatiquement Prospection cristal.',
+        id: 'autoSynergy',
+        name: 'Mining Synergy',
+        desc: 'Automatically purchase Mining Synergy.',
         costEnergy: AUTOMATION_COST_ENERGY,
         costTitanite: AUTOMATION_COST_TITANITE,
         type: 'upgrade',
-        upgradeId: 'passiveCrystal',
+        upgradeId: 'synergy',
         unlocked: false,
         active: false,
         lastTick: 0,
@@ -519,9 +523,15 @@ function formatNumber(dec, precision = 2) {
     if (!(dec instanceof Decimal)) {
         try { dec = new Decimal(dec); } catch (e) { return "0"; }
     }
-    if (!dec) return "0";
-    //if (!dec.isFinite() || dec.isNaN()) return "0";
     if (dec.lt(1000)) return dec.toFixed(0);
+
+    if (numberNotation === 'scientific') {
+        let exp = dec.toExponential(precision);
+        exp = exp.replace(/e\+/, 'e');
+        return exp;
+    }
+
+    // Notation standard avec suffixes
     const suffixes = ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
     const log10 = dec.log10();
     let tier = Math.floor(log10 / 3);
@@ -560,6 +570,7 @@ function getSaveData() {
         naniteBuilding2,
         naniteBuilding3,
         spaceTabUnlocked,
+        numberNotation,
         timestamp: Date.now()
     };
 }
@@ -615,6 +626,7 @@ function loadSaveData(data) {
         naniteBuilding2 = data.naniteBuilding2 || false;
         naniteBuilding3 = data.naniteBuilding3 || false;
         spaceTabUnlocked = data.spaceTabUnlocked || false;
+        if (data.numberNotation) numberNotation = data.numberNotation;
         return true;
     } catch (e) {
         console.error(e);
@@ -657,6 +669,7 @@ function resetGame() {
     naniteBuilding2 = false;
     naniteBuilding3 = false;
     spaceTabUnlocked = false;
+    numberNotation = 'standard';
     resetAchievements();
     recalcProduction();
 }

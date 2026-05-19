@@ -29,22 +29,22 @@ function buildResourcesBar() {
     const bar = document.getElementById('resources-bar');
     bar.innerHTML = `
         <div class="resource-item">
-            <span class="resource-label crystal-color">💎 Cristal</span>
+            <span class="resource-label crystal-color">💎 Crystal</span>
             <span class="resource-value" id="crystalAmount">10</span>
             <span class="resource-rate" id="crystalRate">+0/sec</span>
         </div>
         <div class="resource-item">
-            <span class="resource-label metal-color">⚙️ Métal</span>
+            <span class="resource-label metal-color">⚙️ Iron</span>
             <span class="resource-value" id="metalAmount">10</span>
             <span class="resource-rate" id="metalRate">+0/sec</span>
         </div>
         <div class="resource-item" id="deutResItem" style="display:none;">
-            <span class="resource-label deuterium-color">💧 Deutérium</span>
+            <span class="resource-label deuterium-color">💧 Deuterium</span>
             <span class="resource-value" id="deuteriumAmount">0</span>
             <span class="resource-rate" id="deuteriumRate">+0/sec</span>
         </div>
         <div class="resource-item" id="energyResItem" style="display:none;">
-            <span class="resource-label energy-color">⚡ Énergie</span>
+            <span class="resource-label energy-color">⚡ Energy</span>
             <span class="resource-value" id="energyAmount">0</span>
             <span class="resource-rate" id="energyRate">+0/sec</span>
         </div>
@@ -65,41 +65,41 @@ function buildTabBasic() {
             <div class="mine-grid">
                 <div class="mine-item">
                     <div class="mine-info">
-                        <span class="mine-label crystal-color">💎 Cristal</span>
+                        <span class="mine-label crystal-color">💎 Crystal</span>
                         <span class="mine-count" id="mineCountCrystal">0</span>
                         <span class="mine-count-bonus" id="mineCountBonusCrystal"></span>
                     </div>
                     <div class="mine-action">
-                        <button class="mine-buy-btn" id="buyCrystalBtn">Acheter</button>
+                        <button class="mine-buy-btn" id="buyCrystalBtn">Buy</button>
                         <span class="mine-cost-display" id="costCrystalDisplay"></span>
                     </div>
                 </div>
                 <div class="mine-item">
                     <div class="mine-info">
-                        <span class="mine-label metal-color">⚙️ Métal</span>
+                        <span class="mine-label metal-color">⚙️ Iron</span>
                         <span class="mine-count" id="mineCountMetal">0</span>
                         <span class="mine-count-bonus" id="mineCountBonusMetal"></span>
                     </div>
                     <div class="mine-action">
-                        <button class="mine-buy-btn" id="buyMetalBtn">Acheter</button>
+                        <button class="mine-buy-btn" id="buyMetalBtn">Buy</button>
                         <span class="mine-cost-display" id="costMetalDisplay"></span>
                     </div>
                 </div>
                 <div class="mine-item" id="deuteriumMineRow" style="display: none;">
                     <div class="mine-info">
-                        <span class="mine-label deuterium-color">💧 Deutérium</span>
+                        <span class="mine-label deuterium-color">💧 Deuterium</span>
                         <span class="mine-count" id="mineCountDeuterium">0</span>
                         <span class="mine-count-bonus" id="mineCountBonusDeuterium"></span>
                     </div>
                     <div class="mine-action">
-                        <button class="mine-buy-btn" id="buyDeuteriumBtn">Acheter</button>
+                        <button class="mine-buy-btn" id="buyDeuteriumBtn">Buy</button>
                         <span class="mine-cost-display" id="costDeuteriumDisplay"></span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="panel-section">
-            <div class="section-title">Améliorations</div>
+            <div class="section-title">Upgrades</div>
             <div class="upgrades-grid" id="classicUpgrades"></div>
         </div>
     `;
@@ -115,24 +115,24 @@ function buildTabEnergy() {
     const tab = document.getElementById('tab-energy');
     tab.innerHTML = `
         <div class="panel-section" id="deutSection" style="display:none;">
-            <div class="section-title">Réservoir de Deutérium</div>
-            <div><span id="storageLevelText">Niv. 1</span> / <span id="storageMaxLevel">10</span></div>
-            <div>Capacité : <span id="storageCapacityText">40</span></div>
-            <button id="upgradeStorageBtn">Améliorer réservoir</button>
+            <div class="section-title">Deuterium Tank</div>
+            <div><span id="storageLevelText">Lvl. 1</span> / <span id="storageMaxLevel">10</span></div>
+            <div>Capacity : <span id="storageCapacityText">40</span></div>
+            <button id="upgradeStorageBtn">Buy one level</button>
         </div>
         <div class="panel-section" id="centraleSection" style="display:none;">
-            <div class="section-title">Centrale électrique</div>
-            <div>Niv. <span id="powerPlantLevel">0</span> / <span id="powerPlantMaxLevel">10</span></div>
-            <div>Consommation : <span id="deuteriumConsume">0</span>/sec</div>
+            <div class="section-title">Power plant</div>
+            <div>Lvl. <span id="powerPlantLevel">0</span> / <span id="powerPlantMaxLevel">10</span></div>
+            <div>Consumption : <span id="deuteriumConsume">0</span>/sec</div>
             <div>Production : <span id="energyProd">0</span>/sec</div>
             <div class="centrale-controls">
-                <button id="buyPowerPlantBtn">Améliorer</button>
-                <button id="downgradePowerPlantBtn">Réduire (-1)</button>
+                <button id="buyPowerPlantBtn">Buy one level</button>
+                <button id="downgradePowerPlantBtn">Destroy one level (-1)</button>
             </div>
-            <div id="powerAlarm" style="color:#ef5350;display:none;">Deutérium épuisé !</div>
+            <div id="powerAlarm" style="color:#ef5350;display:none;">Deuterium depleted !</div>
         </div>
         <div class="panel-section" id="energyUpgradesSection" style="display:none;">
-            <div class="section-title">Améliorations énergétiques</div>
+            <div class="section-title">Energy upgrades</div>
             <div class="upgrades-grid" id="energyUpgradesContainer"></div>
         </div>
     `;
@@ -148,24 +148,24 @@ function buildTabTitanite() {
     const tab = document.getElementById('tab-titanite');
     tab.innerHTML = `
         <div class="panel-section" id="titaniteMineSection" style="display:none;">
-            <div class="section-title">Mine de Titanite</div>
+            <div class="section-title">Titanite Mine</div>
             <div class="mine-item">
                 <div class="mine-info">
                     <span class="mine-label titanite-color">🔶 Titanite</span>
                     <span class="mine-count" id="mineCountTitanite">0<span> 
                 </div>
                 <div class="mine-action">
-                    <button class="mine-buy-btn" id="buyTitaniteBtn">Acheter</button>
+                    <button class="mine-buy-btn" id="buyTitaniteBtn">Buy</button>
                     <span class="mine-cost-display" id="costTitaniteDisplay"></span>
                 </div>
             </div>
         </div>
         <div class="panel-section" id="titaniteUpgradesSection" style="display:none;">
-            <div class="section-title">Améliorations Titanite</div>
+            <div class="section-title">Titanite Upgrades</div>
             <div class="upgrades-grid" id="titaniteUpgradesContainer"></div>
         </div>
         <div class="panel-section" id="automationSection" style="display:none;">
-            <div class="section-title">Automatisation</div>
+            <div class="section-title">Automation</div>
             <div class="automation-grid" id="automationGrid"></div>
         </div>
     `;
@@ -192,7 +192,7 @@ function fillClassicUpgrades() {
                 <span class="cost-metal"></span>
             </div>
             <div class="upgrade-actions">
-                <button class="upgrade-buy buy-classic" data-id="${up.id}">Acheter</button>
+                <button class="upgrade-buy buy-classic" data-id="${up.id}">Buy</button>
                 <button class="boost-btn boost-deuterium" data-id="${up.id}" style="display:none;">Boost</button>
             </div>
         `;
@@ -216,11 +216,11 @@ function fillEnergyUpgrades() {
         row.innerHTML = `
             <div class="upgrade-info">
                 <div class="upgrade-name-line">${eu.name}</div>
-                <div class="upgrade-level-line">Niv. ${eu.level}</div>
+                <div class="upgrade-level-line">Lvl. ${eu.level}</div>
                 <div class="upgrade-desc-line">${eu.getDescription()}</div>
             </div>
             <div class="upgrade-cost"><span class="cost-energy"></span></div>
-            <button class="upgrade-buy buy-energy" data-id="${eu.id}">Acheter</button>
+            <button class="upgrade-buy buy-energy" data-id="${eu.id}">Buy</button>
         `;
         container.appendChild(row);
     });
@@ -241,11 +241,11 @@ function fillTitaniteUpgrades() {
         row.innerHTML = `
             <div class="upgrade-info">
                 <div class="upgrade-name-line">${tu.name}</div>
-                <div class="upgrade-level-line">Niv. ${tu.level}</div>
+                <div class="upgrade-level-line">Lvl. ${tu.level}</div>
                 <div class="upgrade-desc-line">${tu.getDescription()}</div>
             </div>
             <div class="upgrade-cost"><span class="cost-titanite"></span></div>
-            <button class="upgrade-buy buy-titanite" data-id="${tu.id}">Acheter</button>
+            <button class="upgrade-buy buy-titanite" data-id="${tu.id}">Buy</button>
         `;
         container.appendChild(row);
     });
@@ -270,8 +270,8 @@ function fillAutomationGrid() {
                 <div class="automation-status" id="autoStatus_${auto.id}"></div>
             </div>
             <div class="automation-actions">
-                <button class="automation-buy-btn" id="autoBuy_${auto.id}" data-id="${auto.id}">Débloquer</button>
-                <button class="automation-toggle-btn" id="autoToggle_${auto.id}" data-id="${auto.id}" style="display:none;">Activer</button>
+                <button class="automation-buy-btn" id="autoBuy_${auto.id}" data-id="${auto.id}">Unlock</button>
+                <button class="automation-toggle-btn" id="autoToggle_${auto.id}" data-id="${auto.id}" style="display:none;">Enable</button>
             </div>
         `;
         container.appendChild(row);
@@ -366,7 +366,7 @@ function generateCostTable() {
     let html = '';
 
     // --- Mines ---
-    html += '<h4>Mines</h4><table><tr><th>Niveau</th><th>Cristal (💎)</th><th>Métal (⚙️)</th><th>Deutérium (💧/⚙️)</th><th>Titanite (💎/⚙️/💧)</th></tr>';
+    html += '<h4>Mines</h4><table><tr><th>Niveau</th><th>Crystal (💎)</th><th>Iron (⚙️)</th><th>Deuterium (💧/⚙️)</th><th>Titanite (💎/⚙️/💧)</th></tr>';
     for (let n = 0; n < 50; n++) {
         const c = cost(BASE_COST_CRYSTAL, COST_GROWTH, n);
         const m = cost(BASE_COST_METAL, COST_GROWTH, n);
@@ -389,7 +389,8 @@ function generateCostTable() {
     if (typeof upgradesData !== 'undefined') {
         upgradesData.forEach(up => {
             if (up.baseCostCrystal === undefined && up.baseCostMetal === undefined) return;
-            html += `<h4>${up.name}</h4><table><tr><th>Niveau</th><th>Cristal</th><th>Métal</th></tr>`;
+            html += `<h4>${up.name}</h4><table><tr><th>Niveau</th><th>    html += '<h4>Mines</h4><table><tr><th>Niveau</th><th>Crystal (💎)</th><th>Iron (⚙️)</th><th>Deuterium (💧/⚙️)</th><th>Titanite (💎/⚙️/💧)</th></tr>';
+</th><th>Iron</th></tr>`;
             for (let level = 0; level < 50; level++) {
                 if (level >= up.maxLevel) break; // s'arrêter au niveau max
                 const cCost = cost(up.baseCostCrystal, up.costMult, level);
@@ -471,7 +472,7 @@ function updateNanitePlantUI() {
             </div>
             <div class="mine-action">
                 <button class="mine-buy-btn" data-nanite="${i}" ${canBuy && !owned ? '' : 'disabled'}>
-                    ${owned ? '✔️' : 'Acheter'}
+                    ${owned ? '✔️' : 'Buy'}
                 </button>
             </div>
         </div>`;
@@ -509,7 +510,7 @@ function updateNaniteBuildingsUI() {
             </div>
             <div class="upgrade-actions">
                 <button class="upgrade-buy" data-building="${b.id}" ${(!unlocked || bought || !canAfford) ? 'disabled' : ''}>
-                    ${bought ? '✔️' : (unlocked ? 'Acheter' : 'Verrouillé')}
+                    ${bought ? '✔️' : (unlocked ? 'Buy' : 'Locked')}
                 </button>
             </div>
         </div>`;
@@ -594,8 +595,8 @@ function updateUI() {
     }
 
     // --- Onglet 1 : Mines de base ---
-    document.getElementById('mineCountCrystal').textContent = 'Niv. '+minesCount.crystal;
-    document.getElementById('mineCountMetal').textContent = 'Niv. '+minesCount.metal;
+    document.getElementById('mineCountCrystal').textContent = 'Lvl. ' + minesCount.crystal;
+    document.getElementById('mineCountMetal').textContent = 'Lvl. ' + minesCount.metal;
     document.getElementById('costCrystalDisplay').textContent = formatCost('crystal', getCostCrystalMine());
     document.getElementById('costMetalDisplay').textContent = formatCost('metal', getCostMetalMine());
     document.getElementById('buyCrystalBtn').disabled = resources.crystal.lt(getCostCrystalMine());
@@ -605,7 +606,7 @@ function updateUI() {
     const deutMineRow = document.getElementById('deuteriumMineRow');
     if (deuteriumUnlocked) {
         deutMineRow.style.display = '';
-        document.getElementById('mineCountDeuterium').textContent = 'Niv. '+minesCount.deuterium;
+        document.getElementById('mineCountDeuterium').textContent = 'Lvl. ' + minesCount.deuterium;
         const costD = getCostDeuteriumMine();
         document.getElementById('costDeuteriumDisplay').textContent = `${formatCost('crystal', costD.crystal)} ${formatCost('metal', costD.metal)}`;
         document.getElementById('buyDeuteriumBtn').disabled = resources.crystal.lt(costD.crystal) || resources.metal.lt(costD.metal);
@@ -633,7 +634,7 @@ function updateUI() {
             const boostCost = new Decimal(up.deuteriumBoostCost).times(Decimal.pow(2, up.deuteriumBoostLevel)).times(1 - reduction);
             const canBoost = deuteriumUnlocked && resources.deuterium.gte(boostCost);
 
-            let lvlText = `Niv. ${up.level}/${maxLvl}`;
+            let lvlText = `Lvl. ${up.level}/${maxLvl}`;
 
             if (deuteriumUnlocked) lvlText += ` (Boost ${up.deuteriumBoostLevel})`;
 
@@ -646,7 +647,7 @@ function updateUI() {
             const buyBtn = row.querySelector('.buy-classic');
             if (buyBtn) {
                 buyBtn.disabled = !canBuy;
-                buyBtn.textContent = up.level >= maxLvl ? 'MAX' : 'Acheter';
+                buyBtn.textContent = up.level >= maxLvl ? 'MAX' : 'Buy';
             }
             const boostBtn = row.querySelector('.boost-deuterium');
             if (boostBtn) {
@@ -664,14 +665,14 @@ function updateUI() {
 
     if (deuteriumUnlocked) {
         deutSection.style.display = '';
-        document.getElementById('storageLevelText').textContent = `Niv. ${deuteriumStorageLevel}`;
+        document.getElementById('storageLevelText').textContent = `Lvl. ${deuteriumStorageLevel}`;
         document.getElementById('storageMaxLevel').textContent = getMaxDeuteriumLevel();
         document.getElementById('storageCapacityText').textContent = formatNumber(getMaxDeuterium());
         const storageBtn = document.getElementById('upgradeStorageBtn');
         if (deuteriumStorageLevel < getMaxDeuteriumLevel()) {
             const cost = getStorageUpgradeCost();
             storageBtn.style.display = '';
-            storageBtn.textContent = `Améliorer (${formatCost('crystal', cost.crystal)} ${formatCost('metal', cost.metal)})`;
+            storageBtn.textContent = `Buy one level (${formatCost('crystal', cost.crystal)} ${formatCost('metal', cost.metal)})`;
             storageBtn.disabled = !(resources.crystal.gte(cost.crystal) && resources.metal.gte(cost.metal));
         } else {
             storageBtn.style.display = 'none';
@@ -690,7 +691,7 @@ function updateUI() {
         if (powerPlantLevel < getMaxPowerPlantLevel()) {
             const cost = getPowerPlantCost();
             buyBtn.style.display = '';
-            buyBtn.textContent = `Améliorer (${formatCost('crystal', cost.crystal)} ${formatCost('metal', cost.metal)})`;
+            buyBtn.textContent = `Buy one level (${formatCost('crystal', cost.crystal)} ${formatCost('metal', cost.metal)})`;
             buyBtn.disabled = !(resources.crystal.gte(cost.crystal) && resources.metal.gte(cost.metal));
         } else {
             buyBtn.style.display = 'none';
@@ -714,13 +715,13 @@ function updateUI() {
                 const cost = maxed ? new Decimal(0) : new Decimal(eu.baseCost).times(Decimal.pow(eu.costMult, eu.level)).floor();
                 const canAfford = resources.energy.gte(cost);
                 row.querySelector('.upgrade-name-line').textContent = eu.name;
-                row.querySelector('.upgrade-level-line').textContent = `Niv. ${eu.level}`;
+                row.querySelector('.upgrade-level-line').textContent = `Lvl. ${eu.level}`;
                 row.querySelector('.upgrade-desc-line').textContent = eu.getDescription();
                 row.querySelector('.cost-energy').textContent = maxed ? 'MAX' : formatCost('energy', cost);
                 const buyBtn = row.querySelector('.buy-energy');
                 if (buyBtn) {
                     buyBtn.disabled = maxed || !canAfford;
-                    buyBtn.textContent = maxed ? 'OK' : 'Acheter';
+                    buyBtn.textContent = maxed ? 'OK' : 'Buy';
                 }
             });
         }
@@ -733,7 +734,7 @@ function updateUI() {
 
     if (titaniteUnlocked) {
         titaniteMineSection.style.display = '';
-        document.getElementById('mineCountTitanite').textContent = 'Niv. '+minesCount.titanite;
+        document.getElementById('mineCountTitanite').textContent = 'Lvl. ' + minesCount.titanite;
         const costT = getCostTitaniteMine();
         document.getElementById('costTitaniteDisplay').textContent = `${formatCost('crystal', costT.crystal)} ${formatCost('metal', costT.metal)} ${formatCost('deuterium', costT.deuterium)}`;
         document.getElementById('buyTitaniteBtn').disabled = resources.crystal.lt(costT.crystal) || resources.metal.lt(costT.metal) || resources.deuterium.lt(costT.deuterium);
@@ -748,13 +749,13 @@ function updateUI() {
                 const cost = maxed ? new Decimal(0) : new Decimal(tu.baseCost).times(Decimal.pow(tu.costMult, tu.level)).floor();
                 const canAfford = resources.titanite.gte(cost);
                 row.querySelector('.upgrade-name-line').textContent = tu.name;
-                row.querySelector('.upgrade-level-line').textContent = `Niv. ${tu.level}`;
+                row.querySelector('.upgrade-level-line').textContent = `Lvl. ${tu.level}`;
                 row.querySelector('.upgrade-desc-line').textContent = tu.getDescription();
                 row.querySelector('.cost-titanite').textContent = maxed ? 'MAX' : formatCost('titanite', cost);
                 const buyBtn = row.querySelector('.buy-titanite');
                 if (buyBtn) {
                     buyBtn.disabled = maxed || !canAfford;
-                    buyBtn.textContent = maxed ? 'OK' : 'Acheter';
+                    buyBtn.textContent = maxed ? 'OK' : 'Buy';
                 }
             });
         }
@@ -802,9 +803,9 @@ function updateSaveInfo() {
     const info = document.getElementById('saveInfo');
     if (info) {
         if (lastSaveTimestamp) {
-            info.textContent = `Dernière sauvegarde : ${new Date(lastSaveTimestamp).toLocaleTimeString()}`;
+            info.textContent = `Last save : ${new Date(lastSaveTimestamp).toLocaleTimeString()}`;
         } else {
-            info.textContent = 'Aucune sauvegarde récente.';
+            info.textContent = 'No current save.';
         }
     }
 }
@@ -850,9 +851,16 @@ function initGlobalEvents() {
     const overlay = document.getElementById('saveOverlay');
     const closeBtn = document.getElementById('closeOverlayBtn');
     if (floatingBtn && overlay && closeBtn) {
-        floatingBtn.addEventListener('click', () => { overlay.style.display = 'flex'; updateSaveInfo(); });
+        floatingBtn.addEventListener('click', () => {
+            overlay.style.display = 'flex';
+            const activeRadio = document.querySelector(`input[name="notation"][value="${numberNotation}"]`);
+            if (activeRadio) activeRadio.checked = true;
+            updateSaveInfo();
+        });
         closeBtn.addEventListener('click', () => overlay.style.display = 'none');
-        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.style.display = 'none';
+        });
     }
 
     document.getElementById('saveBtn')?.addEventListener('click', () => {
@@ -861,13 +869,13 @@ function initGlobalEvents() {
         updateSaveInfo();
         updateUI();
     });
-    document.getElementById('loadBtn')?.addEventListener('click', () => {
-        if (loadFromLocalStorage()) {
-            lastSaveTimestamp = Date.now();
-            updateUI();
-            updateSaveInfo();
-        } else alert('Aucune sauvegarde trouvée.');
-    });
+    /*    document.getElementById('loadBtn')?.addEventListener('click', () => {
+            if (loadFromLocalStorage()) {
+                lastSaveTimestamp = Date.now();
+                updateUI();
+                updateSaveInfo();
+            } else alert('Aucune sauvegarde trouvée.');
+        });*/
     document.getElementById('exportBtn')?.addEventListener('click', () => {
         const data = getSaveData();
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -901,6 +909,16 @@ function initGlobalEvents() {
             updateUI();
             updateSaveInfo();
         }
+    });
+    // Notation des nombres
+    const notationRadios = document.querySelectorAll('input[name="notation"]');
+    notationRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.checked) {
+                numberNotation = radio.value;
+                updateUI(); // rafraîchit tous les affichages
+            }
+        });
     });
     // Bouton succès
     const achFloatingBtn = document.getElementById('achievementsFloatingBtn');

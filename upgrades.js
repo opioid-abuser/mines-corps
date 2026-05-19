@@ -2,8 +2,8 @@
 const upgradesData = [
     {
         id: 'prodBoost',
-        name: 'Productivité',
-        baseDescription: 'Augmente la production de chaque mine.',
+        name: 'Productivity',
+        baseDescription: 'Increases the production of each mine.',
         baseCostCrystal: 50,
         baseCostMetal: 25,
         costMult: 1.6,
@@ -20,13 +20,13 @@ const upgradesData = [
             const bonus = 1 + this.deuteriumBoostLevel * 0.1;
             const perMine = (0.5 * bonus).toFixed(1);
             const current = this.getEffect(this.level).toFixed(1);
-            return `+${perMine}/mine/niv. Bonus actuel : +${current}/sec par mine.`;
+            return `+${perMine}/mine/lvl. Current bonus : +${current}/sec per mine.`;
         }
     },
     {
         id: 'costReduction',
-        name: 'Forage efficace',
-        baseDescription: 'Réduit le coût des mines.',
+        name: 'High-efficiency drilling',
+        baseDescription: 'Reduces mining prices.',
         baseCostCrystal: 100,
         baseCostMetal: 0,
         costMult: 2.5,
@@ -42,13 +42,13 @@ const upgradesData = [
         get maxLevel() { return Math.floor(this.maxLevelBase + this.deuteriumBoostLevel / 4); },
         getDescription() {
             const reduction = (this.getEffect(this.level) * 100).toFixed(0);
-            return `Réduction : ${reduction}% sur le coût des mines.`;
+            return `Reduce mines prices by ${reduction}%.`;
         }
     },
     {
         id: 'passiveCrystal',
-        name: 'Prospection cristal',
-        baseDescription: 'Production passive de cristal.',
+        name: 'Crystal prospecting',
+        baseDescription: 'Passive crystal production.',
         baseCostCrystal: 0,
         baseCostMetal: 75,
         costMult: 1.5,
@@ -63,13 +63,13 @@ const upgradesData = [
         get maxLevel() { return this.maxLevelBase + this.deuteriumBoostLevel * 3; },
         getDescription() {
             const current = this.getEffect(this.level).toFixed(1);
-            return `+${current} cristal/sec (passif).`;
+            return `+${current} crystal/sec.`;
         }
     },
     {
         id: 'synergy',
-        name: 'Synergie minière',
-        baseDescription: 'Bonus de production selon le nombre total de mines.',
+        name: 'Mining Synergy',
+        baseDescription: 'Production bonus based on the total number of mines.',
         baseCostCrystal: 20000,
         baseCostMetal: 10000,
         costMult: 2.2,
@@ -89,7 +89,7 @@ const upgradesData = [
             const perMine = (this.getEffect(this.level) * 100).toFixed(1);
             const total = getAllMinesCount();
             const totalBonus = (this.getEffect(this.level) * total * 100).toFixed(1);
-            return `+${perMine}% par mine. Bonus total : +${totalBonus}% production.`;
+            return `+${perMine}% per mine. Total Bonus : +${totalBonus}% production.`;
         }
     }
 ];
@@ -99,13 +99,15 @@ const energyUpgradesData = [
     {
         id: 'amplification',
         name: 'Amplification',
-        baseDescription: 'Production cristal/métal +10% par niveau.',
+        baseDescription: 'Crystal/iron production +10% per level.',
         baseCost: 20,
         costMult: 2.5,
         level: 0,
         maxLevel: 15,
         getEffect() { return 1 + this.level * 0.1; },
-        getDescription() { return `Multiplie par ${this.getEffect().toFixed(1)} la production de cristal et métal.`; },
+        getDescription() {
+            return `Multiply crystal and iron production by ${this.getEffect().toFixed(1)}.`;
+        },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -118,14 +120,16 @@ const energyUpgradesData = [
     },
     {
         id: 'deuteriumOptimization',
-        name: 'Optimisation deutérium',
-        baseDescription: 'Réduit le coût des boosts deutérium de 10% par niveau.',
+        name: 'Deuterium optimization',
+        baseDescription: 'Reduces the price of deuterium boosts by 10% per level.',
         baseCost: 45,
         costMult: 2.5,
         level: 0,
         maxLevel: 10,
         getEffect() { return Math.min(this.level * 0.05, 0.99); },
-        getDescription() { return `Réduction du prix en deutérium des boosts ${(this.getEffect()*100).toFixed(0)}%.`; },
+        getDescription() {
+            return `Reduces the deuterium price of boosts ${(this.getEffect() * 100).toFixed(0)}%.`;
+        },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -137,8 +141,8 @@ const energyUpgradesData = [
     },
     {
         id: 'overcharge',
-        name: 'Surcharge',
-        baseDescription: 'Production d\'énergie +20% par niveau.',
+        name: 'Overcharge',
+        baseDescription: 'Energy production +20% per level.',
         baseCost: 15,
         costMult: 2.0,
         level: 0,
@@ -147,7 +151,7 @@ const energyUpgradesData = [
             return this.level * 0.2;
         },
         getDescription() {
-            return `+${(this.getEffect() * 100).toFixed(0)}% production d\'énergie.`;
+            return `+${(this.getEffect() * 100).toFixed(0)}% energy production.`;
         },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
@@ -161,14 +165,16 @@ const energyUpgradesData = [
     },
     {
         id: 'storage',
-        name: 'Stockage énergie',
-        baseDescription: 'Capacité énergie +50% par niveau.',
+        name: 'Energy storage',
+        baseDescription: 'Energy capacity +50% per level.',
         baseCost: 10,
         costMult: 1.8,
         level: 0,
         maxLevel: 10,
         getEffect() { return this.level * 0.5; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% capacité d\'énergie.`; },
+        getDescription() {
+            return `+${(this.getEffect() * 100).toFixed(0)}% energy capacity.`;
+        },
         buy() {
             if (this.level >= this.maxLevel || powerPlantLevel === 0) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -185,14 +191,16 @@ const energyUpgradesData = [
 const titaniteUpgradesData = [
     {
         id: 'energyProdBoost',
-        name: 'Surcharge titanite',
-        baseDescription: 'Production énergie +30% par niveau.',
+        name: 'Titanite overcharge',
+        baseDescription: 'Energy production up 30% per level.',
         baseCost: 100000,
         costMult: 2.0,
         level: 0,
         maxLevel: 15,
         getEffect() { return this.level * 0.3; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% production d\'énergie.`; },
+        getDescription() {
+            return `+${(this.getEffect() * 100).toFixed(0)}% energy production.`;
+        },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -205,14 +213,16 @@ const titaniteUpgradesData = [
     },
     {
         id: 'energyStorageTitan',
-        name: 'Condensateur titanite',
-        baseDescription: 'Capacité énergie +50% par niveau.',
+        name: 'Titanite capacitor',
+        baseDescription: 'Energy capacity +50% per level.',
         baseCost: 150000,
         costMult: 2.2,
         level: 0,
         maxLevel: 10,
         getEffect() { return this.level * 0.5; },
-        getDescription() { return `+${(this.getEffect()*100).toFixed(0)}% capacité d\'énergie.`; },
+        getDescription() {
+            return `+${(this.getEffect() * 100).toFixed(0)}% energy capacity.`;
+        },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -225,14 +235,16 @@ const titaniteUpgradesData = [
     },
     {
         id: 'deutStorageBoost',
-        name: 'Réservoir renforcé',
-        baseDescription: 'Niveau max réservoir deutérium +2 par niveau.',
+        name: 'Hardened tank',
+        baseDescription: 'Max level Deuterium tank : +2 per level.',
         baseCost: 200000,
         costMult: 2.5,
         level: 0,
         maxLevel: 5,
         getEffect() { return this.level * 2; },
-        getDescription() { return `+${this.getEffect()} niveaux max réservoir deutérium.`; },
+        getDescription() {
+            return `+${this.getEffect()} max Deuterium tank level.`;
+        },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -244,14 +256,16 @@ const titaniteUpgradesData = [
     },
     {
         id: 'powerPlantMax',
-        name: 'Extension centrale',
-        baseDescription: 'Niveau max centrale +2 par niveau.',
+        name: 'Power plant extension',
+        baseDescription: 'Max level Power plant: +2 per level.',
         baseCost: 300000,
         costMult: 3.0,
         level: 0,
         maxLevel: 5,
         getEffect() { return this.level * 2; },
-        getDescription() { return `+${this.getEffect()} niveaux max centrale électrique.`; },
+        getDescription() {
+            return `+${this.getEffect()} max Power plant level.`;
+        },
         buy() {
             if (this.level >= this.maxLevel || !titaniteUnlocked) return false;
             const cost = new Decimal(this.baseCost).times(Decimal.pow(this.costMult, this.level)).floor();
@@ -292,10 +306,10 @@ const titaniteUpgradesData = [
 const naniteBuildingsData = [
     {
         id: 'converter',
-        name: 'Convertisseur crystallique',
-        desc: '50% de la production de cristal est ajoutée à celle de métal.',
+        name: 'Crystallic Converter',
+        desc: '50% of crystal production is added to metal production',
         requiredPlantLevel: 1,
-        cost: {crystal: 250000, metal: 150000, deuterium: 50000, titanite: 2500},
+        cost: {crystal: 1e10, metal: 1e8, deuterium: 1e7, titanite: 5e10},
         isBought() {
             return naniteBuilding1;
         },
@@ -315,10 +329,10 @@ const naniteBuildingsData = [
     },
     {
         id: 'drones',
-        name: 'Usine de nano-drones',
-        desc: 'Bonus passif égal à 80% du nombre de mines.',
+        name: 'Nano-drones factory',
+        desc: 'Each mine is increased by 80% of its base value',
         requiredPlantLevel: 2,
-        cost: {crystal: 1000000, metal: 600000, deuterium: 200000, titanite: 10000},
+        cost: {crystal: 3e11, metal: 3e10, deuterium: 9e7, titanite: 9e10},
         isBought() {
             return naniteBuilding2;
         },
@@ -338,10 +352,10 @@ const naniteBuildingsData = [
     },
     {
         id: 'spaceport',
-        name: 'Spatio-port',
-        desc: 'Débloque l’onglet des vaisseaux spatiaux.', // TODO
+        name: 'Spaceport',
+        desc: 'Unlocks the Spaceship tab.[TBC]', // TODO
         requiredPlantLevel: 3,
-        cost: {crystal: 4000000, metal: 2500000, deuterium: 750000, titanite: 40000},
+        cost: {crystal: 99e99, metal: 99e99, deuterium: 99e99, titanite: 99e99},
         isBought() {
             return naniteBuilding3;
         },

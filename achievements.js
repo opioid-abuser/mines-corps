@@ -4,8 +4,8 @@ const achievements = [
     // --- Mines cristal (production) ---
     ...[10,25,50,100,150,200,300,400].map((n,i) => ({
         id: `mineCrystal${n}`,
-        name: `Mineur de cristal ${i+1}`,
-        desc: `${n} mines de cristal`,
+        name: `Crystal Miner ${i + 1}`,
+        desc: `${n} crystal mines`,
         condition: () => minesCount.crystal >= n,
         reward() { achievementBonuses.crystalProd += 0.05; },
         points: 1
@@ -13,8 +13,8 @@ const achievements = [
     // --- Mines métal (production) ---
     ...[10,25,50,100,150,200,300,400].map((n,i) => ({
         id: `mineMetal${n}`,
-        name: `Mineur de métal ${i+1}`,
-        desc: `${n} mines de métal`,
+        name: `Iron miner ${i + 1}`,
+        desc: `${n} iron mines`,
         condition: () => minesCount.metal >= n,
         reward() { achievementBonuses.metalProd += 0.05; },
         points: 1
@@ -23,59 +23,257 @@ const achievements = [
     // --- Mines deutérium (production) ---
     ...[8,12,25,50,100,200,300,400].map((n,i) => ({
         id: `mineSpecial${n}`,
-        name: `Cherche Deutier ${i+1}`,
-        desc: `${n} mines de deutérium`,
+        name: `Looking for Deut ${i + 1}`,
+        desc: `${n} deuterium mines`,
         condition: () => (minesCount.deuterium) >= n,
         reward() { achievementBonuses.deuteriumProd += 0.05; achievementBonuses.titaniteProd += 0.05; },
         points: 1
     })),
     // --- Réservoir deutérium (stockage) ---
-    { id: 'storage10', name: 'Réservoir novice', desc: 'Réservoir niveau 10', condition: () => deuteriumStorageLevel >= 10, reward() { achievementBonuses.deuteriumStorage += 0.1; }, points: 1 },
-    { id: 'storage20', name: 'Réservoir intermédiaire', desc: 'Réservoir niveau 20', condition: () => deuteriumStorageLevel >= 20, reward() { achievementBonuses.deuteriumStorage += 0.15; }, points: 1 },
-    { id: 'storage30', name: 'Réservoir expert', desc: 'Réservoir niveau 30', condition: () => deuteriumStorageLevel >= 30, reward() { achievementBonuses.deuteriumStorage += 0.2; }, points: 1 },
-    { id: 'storage50', name: 'Réservoir maître', desc: 'Réservoir niveau 50', condition: () => deuteriumStorageLevel >= 50, reward() { achievementBonuses.deuteriumStorage += 0.25; }, points: 1 },
+    {
+        id: 'storage10',
+        name: 'Beginner Tank',
+        desc: 'Tank level 10',
+        condition: () => deuteriumStorageLevel >= 10,
+        reward() {
+            achievementBonuses.deuteriumStorage += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'storage20',
+        name: 'Intermediate Tank',
+        desc: 'Tank level 20',
+        condition: () => deuteriumStorageLevel >= 20,
+        reward() {
+            achievementBonuses.deuteriumStorage += 0.15;
+        },
+        points: 1
+    },
+    {
+        id: 'storage30',
+        name: 'Expert Tank',
+        desc: 'Tank level 30',
+        condition: () => deuteriumStorageLevel >= 30,
+        reward() {
+            achievementBonuses.deuteriumStorage += 0.2;
+        },
+        points: 1
+    },
+    {
+        id: 'storage50',
+        name: 'Master Tank',
+        desc: 'Tank level 50',
+        condition: () => deuteriumStorageLevel >= 50,
+        reward() {
+            achievementBonuses.deuteriumStorage += 0.25;
+        },
+        points: 1
+    },
 
     // --- Centrale électrique (stockage énergie) ---
-    { id: 'plant5', name: 'Centrale basique', desc: 'Centrale niveau 5', condition: () => powerPlantLevel >= 5, reward() { achievementBonuses.energyStorage += 0.1; }, points: 1 },
-    { id: 'plant12', name: 'Centrale avancée', desc: 'Centrale niveau 12', condition: () => powerPlantLevel >= 12, reward() { achievementBonuses.energyStorage += 0.15; }, points: 1 },
-    { id: 'plant25', name: 'Centrale experte', desc: 'Centrale niveau 25', condition: () => powerPlantLevel >= 25, reward() { achievementBonuses.energyStorage += 0.2; }, points: 1 },
-    { id: 'plant40', name: 'Centrale ultime', desc: 'Centrale niveau 40', condition: () => powerPlantLevel >= 40, reward() { achievementBonuses.energyStorage += 0.25; }, points: 1 },
+    {
+        id: 'plant5',
+        name: 'Basic Power Plant',
+        desc: 'Power Plant level 5',
+        condition: () => powerPlantLevel >= 5,
+        reward() {
+            achievementBonuses.energyStorage += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'plant12',
+        name: 'Advanced Power Plant',
+        desc: 'Power Plant level 12',
+        condition: () => powerPlantLevel >= 12,
+        reward() {
+            achievementBonuses.energyStorage += 0.15;
+        },
+        points: 1
+    },
+    {
+        id: 'plant25',
+        name: 'Expert Power Plant',
+        desc: 'Power Plant level 25',
+        condition: () => powerPlantLevel >= 25,
+        reward() {
+            achievementBonuses.energyStorage += 0.2;
+        },
+        points: 1
+    },
+    {
+        id: 'plant40',
+        name: 'Ultimate Power Plant',
+        desc: 'Power Plant level 40',
+        condition: () => powerPlantLevel >= 40,
+        reward() {
+            achievementBonuses.energyStorage += 0.25;
+        },
+        points: 1
+    },
 
     // --- Mines titanite (production) ---
     ...[8,12,25,50,100,200,300,400].map((n,i) => ({
         id: `mineSpecial${n}`,
-        name: `Spécialiste titaniste ${i+1}`,
-        desc: `${n} mines de titanite`,
+        name: `Titanite Specialist ${i + 1}`,
+        desc: `${n} Titanite mines`,
         condition: () => (minesCount.titanite) >= n,
         reward() { achievementBonuses.deuteriumProd += 0.05; achievementBonuses.titaniteProd += 0.05; },
         points: 1
     })),
 
     // --- Production totale cristal ---
-    { id: 'crystal5k', name: 'Cristal 5k', desc: 'Produire 5 000 cristal au total', condition: () => totalProduced.crystal >= 5000, reward() { achievementBonuses.crystalProd += 0.1; }, points: 1 },
-    { id: 'crystal10k', name: 'Cristal 10k', desc: 'Produire 10 000 cristal', condition: () => totalProduced.crystal >= 10000, reward() { achievementBonuses.crystalProd += 0.1; }, points: 1 },
-    { id: 'crystal100k', name: 'Cristal 100k', desc: 'Produire 100 000 cristal', condition: () => totalProduced.crystal >= 100000, reward() { achievementBonuses.crystalProd += 0.15; }, points: 1 },
-    { id: 'crystal1M', name: 'Cristal 1M', desc: 'Produire 1 000 000 cristal', condition: () => totalProduced.crystal >= 1e6, reward() { achievementBonuses.crystalProd += 0.2; }, points: 1 },
-    { id: 'crystal10M', name: 'Cristal 10M', desc: 'Produire 10 000 000 cristal', condition: () => totalProduced.crystal >= 1e7, reward() { achievementBonuses.crystalProd += 0.25; }, points: 1 },
+    {
+        id: 'crystal5k',
+        name: 'Crystal 5k',
+        desc: 'Produce 5 000 Crystal in total',
+        condition: () => totalProduced.crystal >= 5000,
+        reward() {
+            achievementBonuses.crystalProd += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'crystal10k',
+        name: 'Crystal 10k',
+        desc: 'Produce 10 000 Crystal',
+        condition: () => totalProduced.crystal >= 10000,
+        reward() {
+            achievementBonuses.crystalProd += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'crystal100k',
+        name: 'Crystal 100k',
+        desc: 'Produce 100 000 Crystal',
+        condition: () => totalProduced.crystal >= 100000,
+        reward() {
+            achievementBonuses.crystalProd += 0.15;
+        },
+        points: 1
+    },
+    {
+        id: 'crystal1M',
+        name: 'Crystal 1M',
+        desc: 'Produce 1 000 000 Crystal',
+        condition: () => totalProduced.crystal >= 1e6,
+        reward() {
+            achievementBonuses.crystalProd += 0.2;
+        },
+        points: 1
+    },
+    {
+        id: 'crystal10M',
+        name: 'Crystal 10M',
+        desc: 'Produce 10 000 000 Crystal',
+        condition: () => totalProduced.crystal >= 1e7,
+        reward() {
+            achievementBonuses.crystalProd += 0.25;
+        },
+        points: 1
+    },
 
     // --- Production totale métal ---
-    { id: 'metal4k', name: 'Métal 4k', desc: 'Produire 4 000 métal au total', condition: () => totalProduced.metal >= 4000, reward() { achievementBonuses.metalProd += 0.1; }, points: 1 },
-    { id: 'metal8k', name: 'Métal 8k', desc: 'Produire 8 000 métal', condition: () => totalProduced.metal >= 8000, reward() { achievementBonuses.metalProd += 0.1; }, points: 1 },
-    { id: 'metal80k', name: 'Métal 80k', desc: 'Produire 80 000 métal', condition: () => totalProduced.metal >= 80000, reward() { achievementBonuses.metalProd += 0.15; }, points: 1 },
-    { id: 'metal800k', name: 'Métal 800k', desc: 'Produire 800 000 métal', condition: () => totalProduced.metal >= 800000, reward() { achievementBonuses.metalProd += 0.2; }, points: 1 },
-    { id: 'metal8M', name: 'Métal 8M', desc: 'Produire 8 000 000 métal', condition: () => totalProduced.metal >= 8e6, reward() { achievementBonuses.metalProd += 0.25; }, points: 1 },
+    {
+        id: 'metal4k',
+        name: 'iron 4k',
+        desc: 'Produce 4 000 Iron in total',
+        condition: () => totalProduced.metal >= 4000,
+        reward() {
+            achievementBonuses.metalProd += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'metal8k',
+        name: 'iron 8k',
+        desc: 'Produce 8 000 Iron',
+        condition: () => totalProduced.metal >= 8000,
+        reward() {
+            achievementBonuses.metalProd += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'metal80k',
+        name: 'iron 80k',
+        desc: 'Produce 80 000 Iron',
+        condition: () => totalProduced.metal >= 80000,
+        reward() {
+            achievementBonuses.metalProd += 0.15;
+        },
+        points: 1
+    },
+    {
+        id: 'metal800k',
+        name: 'iron 800k',
+        desc: 'Produce 800 000 Iron',
+        condition: () => totalProduced.metal >= 800000,
+        reward() {
+            achievementBonuses.metalProd += 0.2;
+        },
+        points: 1
+    },
+    {
+        id: 'metal8M',
+        name: 'iron 8M',
+        desc: 'Produce 8 000 000 Iron',
+        condition: () => totalProduced.metal >= 8e6,
+        reward() {
+            achievementBonuses.metalProd += 0.25;
+        },
+        points: 1
+    },
 
     // --- Production totale deutérium ---
-    { id: 'deut15k', name: 'Deutérium 15k', desc: 'Produire 15 000 deutérium au total', condition: () => totalProduced.deuterium >= 15000, reward() { achievementBonuses.deuteriumProd += 0.1; }, points: 1 },
-    { id: 'deut80k', name: 'Deutérium 80k', desc: 'Produire 80 000 deutérium', condition: () => totalProduced.deuterium >= 80000, reward() { achievementBonuses.deuteriumProd += 0.15; }, points: 1 },
-    { id: 'deut800k', name: 'Deutérium 800k', desc: 'Produire 800 000 deutérium', condition: () => totalProduced.deuterium >= 800000, reward() { achievementBonuses.deuteriumProd += 0.2; }, points: 1 },
-    { id: 'deut8M', name: 'Deutérium 8M', desc: 'Produire 8 000 000 deutérium', condition: () => totalProduced.deuterium >= 8e6, reward() { achievementBonuses.deuteriumProd += 0.25; }, points: 1 },
+    {
+        id: 'deut15k',
+        name: 'Deuterium 15k',
+        desc: 'Produce 15 000 Deuterium in total',
+        condition: () => totalProduced.deuterium >= 15000,
+        reward() {
+            achievementBonuses.deuteriumProd += 0.1;
+        },
+        points: 1
+    },
+    {
+        id: 'deut80k',
+        name: 'Deuterium 80k',
+        desc: 'Produce 80 000 Deuterium',
+        condition: () => totalProduced.deuterium >= 80000,
+        reward() {
+            achievementBonuses.deuteriumProd += 0.15;
+        },
+        points: 1
+    },
+    {
+        id: 'deut800k',
+        name: 'Deuterium 800k',
+        desc: 'Produce 800 000 Deuterium',
+        condition: () => totalProduced.deuterium >= 800000,
+        reward() {
+            achievementBonuses.deuteriumProd += 0.2;
+        },
+        points: 1
+    },
+    {
+        id: 'deut8M',
+        name: 'Deuterium 8M',
+        desc: 'Produce 8 000 000 Deuterium',
+        condition: () => totalProduced.deuterium >= 8e6,
+        reward() {
+            achievementBonuses.deuteriumProd += 0.25;
+        },
+        points: 1
+    },
 
     // --- Production totale titanite ---
     {
         id: 'titanite14k',
         name: 'Titanite 14k',
-        desc: 'Produire 14 000 titanite au total',
+        desc: 'Produce 14 000 titanite in total',
         condition: () => totalProduced.titanite >= 14000,
         reward() {
             achievementBonuses.titaniteProd += 0.05;
@@ -85,7 +283,7 @@ const achievements = [
     {
         id: 'titanite60k',
         name: 'Titanite 60k',
-        desc: 'Produire 60 000 titanite',
+        desc: 'Produce 60 000 titanite',
         condition: () => totalProduced.titanite >= 60000,
         reward() {
             achievementBonuses.titaniteProd += 0.1;
@@ -95,7 +293,7 @@ const achievements = [
     {
         id: 'titanite600k',
         name: 'Titanite 600k',
-        desc: 'Produire 600 000 titanite',
+        desc: 'Produce 600 000 titanite',
         condition: () => totalProduced.titanite >= 600000,
         reward() {
             achievementBonuses.titaniteProd += 0.15;
@@ -105,7 +303,7 @@ const achievements = [
     {
         id: 'titanite6M',
         name: 'Titanite 6M',
-        desc: 'Produire 6 000 000 titanite',
+        desc: 'Produce 6 000 000 titanite',
         condition: () => totalProduced.titanite >= 6e6,
         reward() {
             achievementBonuses.titaniteProd += 0.2;
@@ -116,8 +314,8 @@ const achievements = [
     // --- Automatisation ---
     {
         id: 'allAutomations',
-        name: 'Maître des robots',
-        desc: 'Débloquer toutes les automatisations',
+        name: 'Master of Automation',
+        desc: 'Unlock all automations',
         condition: () => automations.every(a => a.unlocked),
         reward() {
             automationInterval = 1000;
@@ -128,8 +326,8 @@ const achievements = [
     // --- Nanite ---
     {
         id: 'achNaniteBuilding1',
-        name: 'Usine Nanite 1',
-        desc: 'Débloquer le premier niveau de l\'usine de nanite',
+        name: 'Nanite Factory 1',
+        desc: 'Unlock the first level of the nanite factory',
         condition: () => naniteBuilding1,
         reward() {
             achievementBonuses.metalProd += 0.2;
@@ -138,8 +336,8 @@ const achievements = [
     },
     {
         id: 'achNaniteBuilding2',
-        name: 'Usine Nanite 2',
-        desc: 'Débloquer le deuxième niveau de l\'usine de nanite',
+        name: 'Nanite Factory 2',
+        desc: 'Unlock the second level of the nanite factory',
         condition: () => naniteBuilding2,
         reward() {
             achievementBonuses.crystalProd += 0.2;
@@ -148,11 +346,11 @@ const achievements = [
     },
     {
         id: 'achNaniteBuilding3',
-        name: 'Usine Nanite 3',
-        desc: 'Débloquer le troisième niveau de l\'usine de nanite',
+        name: 'Nanite Factory 3',
+        desc: 'Unlock the third level of the nanite factory',
         condition: () => naniteBuilding2,
         reward() {
-            achievementBonuses.deuteriumStorage += 20;
+            achievementBonuses.deuteriumStorage += 0.30;
         },
         points: 10
     },

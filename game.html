@@ -10,34 +10,37 @@
 <body>
 <!-- Boutons flottants -->
 <div class="floating-buttons">
-    <button id="saveFloatingBtn" title="Sauvegarde">💾</button>
-    <button id="achievementsFloatingBtn" title="Succès">🏆</button>
+    <button id="saveFloatingBtn" title="Save">💾</button>
+    <button id="achievementsFloatingBtn" title="Achievements">🏆</button>
     <button id="costTableFloatingBtn" title="gear">⚙️</button>
 </div>
 <div class="overlay" id="saveOverlay" style="display: none;">
     <div class="overlay-content">
         <button class="close-btn" id="closeOverlayBtn">&times;</button>
-        <h3>Sauvegarde</h3>
         <div class="save-buttons">
-            <button id="saveBtn">Sauvegarder</button>
-            <button id="loadBtn">Charger</button>
-            <button id="exportBtn">Exporter</button>
-            <button id="importBtn">Importer</button>
-            <button id="resetBtn">Réinitialiser</button>
+            <button id="saveBtn">Save</button>
+            <button id="exportBtn">Export</button>
+            <button id="importBtn">Import</button>
+            <button id="resetBtn">!! Reset Save !!</button>
         </div>
         <input accept=".json" id="importFile" style="display: none;" type="file">
         <div class="save-info" id="saveInfo"></div>
+        <div class="notation-selector">
+            <span>Number Notation :</span>
+            <label><input checked name="notation" type="radio" value="standard"> standard (k, M, G)</label>
+            <label><input name="notation" type="radio" value="scientific"> scientific (1.23e6)</label>
+        </div>
     </div>
 </div>
 <div class="overlay" id="achievementsOverlay" style="display: none;">
     <div class="overlay-content">
         <button class="close-btn" id="closeAchievementsBtn">&times;</button>
-        <h3>🏆 Succès</h3>
-        <div>Points de succès : <span id="achievementPointsDisplay">0</span></div>
+        <h3>🏆 Achievements</h3>
+        <div>Achievements points : <span id="achievementPointsDisplay">0</span></div>
         <div class="achievements-list" id="achievementsList"></div>
         <div class="achievement-shop" id="achievementShop">
-            <h4>Boutique (à venir)</h4>
-            <p>Les points de succès pourront être dépensés ici.</p>
+            <h4>Shop (TBC)</h4>
+            <p>Success points can be spent here.</p>
         </div>
     </div>
 </div>
@@ -56,9 +59,9 @@
 
     <!-- Onglets -->
     <div id="tabs">
-        <button class="tab-btn active" data-tab="tab-basic" id="tab-btn-basic">Mines de base</button>
-        <button class="tab-btn" data-tab="tab-energy" id="tab-btn-energy">Énergie & Deutérium</button>
-        <button class="tab-btn" data-tab="tab-titanite" id="tab-btn-titanite">Titanite & Automatisation</button>
+        <button class="tab-btn active" data-tab="tab-basic" id="tab-btn-basic">Standard Mines</button>
+        <button class="tab-btn" data-tab="tab-energy" id="tab-btn-energy">Deuterium & Energy</button>
+        <button class="tab-btn" data-tab="tab-titanite" id="tab-btn-titanite">Titanite & Automation</button>
         <button class="tab-btn" data-tab="tab-nanite" id="tab-btn-nanite" style="display:none;">Nanite</button>
     </div>
 

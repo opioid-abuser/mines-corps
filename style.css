@@ -363,6 +363,30 @@ body {
 }
 .save-info { font-size: 0.8rem; opacity: 0.8; }
 
+.notation-selector {
+    margin-top: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+.notation-selector span {
+    display: block;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+.notation-selector label {
+    display: block;
+    margin: 0.3rem 0;
+    cursor: pointer;
+}
+
+.notation-selector input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
 .achievements-list {
     display: flex;
     flex-direction: column;
