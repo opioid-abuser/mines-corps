@@ -444,11 +444,11 @@ function buildTabNanite() {
     if (!tab) return;
     tab.innerHTML = `
         <div class="panel-section">
-            <div class="section-title">Usine de Nanite (niveau ${nanitePlantLevel}/3)</div>
+            <div class="section-title">Nanite Factory (level ${nanitePlantLevel}/3)</div>
             <div class="mine-grid" id="nanitePlantGrid"></div>
         </div>
         <div class="panel-section">
-            <div class="section-title">Bâtiments</div>
+            <div class="section-title">Buildings</div>
             <div class="upgrades-grid" id="naniteBuildingsGrid"></div>
         </div>
     `;
@@ -467,7 +467,7 @@ function updateNanitePlantUI() {
         const canBuy = (nanitePlantLevel === i);
         html += `<div class="mine-item">
             <div class="mine-info">
-                <span class="mine-label">Niveau ${level}</span>
+                <span class="mine-label">Level  ${level}</span>
                 <span class="mine-cost-display">${formatCost('crystal', cost.crystal)} ${formatCost('metal', cost.metal)} ${formatCost('deuterium', cost.deuterium)} ${formatCost('titanite', cost.titanite)}</span>
             </div>
             <div class="mine-action">
